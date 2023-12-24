@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, avoid_print
+// ignore_for_file: use_build_context_synchronously, unnecessary_nullable_for_final_variable_declarations, avoid_print
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -40,9 +40,13 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
       String userId = firebaseAuth.currentUser!.uid;
       DocumentSnapshot userDoc =
           await firebaseFirestore.collection('tailors').doc(userId).get();
+
+      // Explicitly cast userDoc.data() to Map<String, dynamic>?
+      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+
       setState(() {
-        fullName = userDoc['fullName'];
-        email = userDoc['tailorEmail'];
+        fullName = userData?['fullName'];
+        email = userData?['tailorEmail'];
       });
     } catch (e) {
       print('Error fetching user data: $e');
@@ -54,9 +58,21 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
       String userId = firebaseAuth.currentUser!.uid;
       DocumentSnapshot userDoc =
           await firebaseFirestore.collection('tailors').doc(userId).get();
-      setState(() {
-        imageUrl = userDoc['profilePic'];
-      });
+
+      // Explicitly cast userDoc.data() to Map<String, dynamic>?
+      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+
+      if (userDoc.exists &&
+          userData != null &&
+          userData.containsKey('profilePic')) {
+        setState(() {
+          imageUrl = userData['profilePic'];
+        });
+      } else {
+        setState(() {
+          imageUrl = null;
+        });
+      }
     } catch (e) {
       setState(() {
         imageUrl = null;
@@ -106,6 +122,35 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
     }
   }
 
+  Future<void> selectRecentOrders() async {
+    final List<XFile>? pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+      List<String> uploadedImageUrls = [];
+      for (var file in pickedFiles) {
+        File imageFile = File(file.path);
+        String url = await uploadOrderImageToFirebase(imageFile);
+        uploadedImageUrls.add(url);
+      }
+
+      await firebaseFirestore
+          .collection('tailors')
+          .doc(firebaseAuth.currentUser!.uid)
+          .set({'recentOrders': uploadedImageUrls}, SetOptions(merge: true));
+    } else {
+      print('No images selected for recent orders.');
+    }
+  }
+
+  Future<String> uploadOrderImageToFirebase(File image) async {
+    String fileName =
+        'recent_${DateTime.now().millisecondsSinceEpoch}_${firebaseAuth.currentUser!.uid}';
+    Reference firebaseStorageRef =
+        firebaseStorage.ref().child('recentorders/$fileName');
+    UploadTask uploadTask = firebaseStorageRef.putFile(image);
+    await uploadTask.whenComplete(() => null);
+    return await firebaseStorageRef.getDownloadURL();
+  }
+
   void pushRoute() {
     Navigator.pushAndRemoveUntil(
       context,
@@ -119,7 +164,7 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(22.0),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -127,7 +172,7 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
                 GestureDetector(
                   onTap: getImage,
                   child: CircleAvatar(
-                    radius: 55,
+                    radius: 70,
                     backgroundColor: Colors.blue,
                     backgroundImage:
                         imageUrl != null ? NetworkImage(imageUrl!) : null,
@@ -145,23 +190,22 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
                 Text(email ?? 'Email', style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 20),
                 if (_errorMessage.isNotEmpty)
-                  Text(
-                    _errorMessage,
-                    style: const TextStyle(color: Colors.red),
-                  ),
+                  Text(_errorMessage,
+                      style: const TextStyle(color: Colors.red)),
                 TextField(
                   controller: _passwordController,
                   obscureText: true,
                   decoration: const InputDecoration(
-                    labelText: 'New Password',
-                    border: OutlineInputBorder(),
-                  ),
+                      labelText: 'New Password', border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: changePassword,
-                  child: const Text('Change Password'),
-                ),
+                    onPressed: changePassword,
+                    child: const Text('Change Password')),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                    onPressed: selectRecentOrders,
+                    child: const Text('Add Recent Order')),
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () async {
