@@ -123,23 +123,49 @@ class UserExploreScreen extends StatelessWidget {
                                         color: Colors.grey,
                                       ),
                                     ),
-                                    Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      color: const Color.fromARGB(
-                                          255, 130, 171, 243),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(
-                                          shop['availableTimings'] ??
-                                              'Available Timings',
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white,
+                                    Row(
+                                      children: [
+                                        Card(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          color: const Color.fromARGB(
+                                              255, 130, 171, 243),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              shop['availableTimings'] ??
+                                                  'Available Timings',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
+                                        const SizedBox(width: 10),
+                                        SizedBox(
+                                          width: 100,
+                                          child: Card(
+                                            color:
+                                                shop['orderStatus'] == "Closed"
+                                                    ? Colors.red
+                                                    : Colors.green,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                child: Text(
+                                                  shop['orderStatus'],
+                                                  style: const TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
