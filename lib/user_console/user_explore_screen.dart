@@ -82,11 +82,15 @@ class UserExploreScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Expanded(
-                                child: (shop['imageURL'] != null)
-                                    ? Image.network(shop['imageURL'])
-                                    : const Image(
-                                        image: AssetImage(
-                                            'assets/image.jpg'), // Placeholder image
+                                child: (shop['profilePic'] != null)
+                                    ? CircleAvatar(
+                                        radius: 60,
+                                        backgroundImage:
+                                            NetworkImage(shop['profilePic']))
+                                    : const CircleAvatar(
+                                        radius: 60,
+                                        backgroundImage:
+                                            AssetImage('assets/image.jpg'),
                                       ),
                               ),
                               const SizedBox(width: 40),

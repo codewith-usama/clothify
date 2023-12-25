@@ -11,7 +11,6 @@ class UserExploreDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<dynamic> recentOrders = shopDetails['recentOrders'] ?? [];
-    print(recentOrders[0]);
 
     return Scaffold(
       appBar: AppBar(
