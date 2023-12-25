@@ -36,9 +36,31 @@ class UserExploreDetailsScreen extends StatelessWidget {
                       : const CircleAvatar(
                           child: Image(image: AssetImage('assets/icon.png'))),
                   const SizedBox(width: 30),
-                  Text(
-                    shopDetails['fullName'] ?? '',
-                    style: const TextStyle(fontSize: 28),
+                  Column(
+                    children: [
+                      Text(
+                        shopDetails['fullName'] ?? '',
+                        style: const TextStyle(fontSize: 28),
+                      ),
+                      // const SizedBox(height: 10),
+                      SizedBox(
+                        width: 80,
+                        child: Card(
+                          color: shopDetails['orderStatus'] == "Closed"
+                              ? Colors.red
+                              : Colors.green,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(
+                                shopDetails['orderStatus'],
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ],
               ),

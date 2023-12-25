@@ -45,6 +45,9 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
       Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
 
       setState(() {
+        if (userData?.containsKey('orderStatus') ?? false) {
+          isOrderActive = userData!['orderStatus'] == 'open';
+        }
         fullName = userData?['fullName'];
         email = userData?['tailorEmail'];
       });
@@ -159,6 +162,19 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
     );
   }
 
+  bool isOrderActive = true;
+
+  Future<void> updateOrderStatusInDatabase(bool status) async {
+    try {
+      String userId = firebaseAuth.currentUser!.uid;
+      await firebaseFirestore.collection('tailors').doc(userId).set({
+        'orderStatus': status ? 'Open' : 'Closed',
+      }, SetOptions(merge: true));
+    } catch (e) {
+      print('Error updating order status: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,6 +222,21 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
                 ElevatedButton(
                     onPressed: selectRecentOrders,
                     child: const Text('Add Recent Order')),
+                const SizedBox(height: 20),
+                SwitchListTile(
+                  activeColor: Colors.white,
+                  activeTrackColor: Colors.green,
+                  inactiveThumbColor: Colors.white,
+                  inactiveTrackColor: Theme.of(context).colorScheme.primary,
+                  title: const Text('Recent Order Status'),
+                  value: isOrderActive,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isOrderActive = value;
+                    });
+                    updateOrderStatusInDatabase(value);
+                  },
+                ),
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () async {
