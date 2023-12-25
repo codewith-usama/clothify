@@ -5,6 +5,7 @@ import 'package:fyp/splash_screen.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
 import 'package:fyp/tailor_console/tailor_master_view_model.dart';
 import 'package:fyp/theme.dart';
+import 'package:fyp/user_console/user_authentication_vm.dart';
 import 'package:fyp/user_console/user_master_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -25,9 +26,12 @@ class MainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<UserMasterViewModel>(
             create: (_) => UserMasterViewModel()),
-            ChangeNotifierProvider<TailorMasterViewModel>(
+        ChangeNotifierProvider<TailorMasterViewModel>(
             create: (_) => TailorMasterViewModel()),
-            ChangeNotifierProvider<TailorAuthenticationVm>(create: (_)=> TailorAuthenticationVm())
+        ChangeNotifierProvider<TailorAuthenticationVm>(
+            create: (_) => TailorAuthenticationVm()),
+        ChangeNotifierProvider<UserAuthenticationVM>(
+            create: (_) => UserAuthenticationVM()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

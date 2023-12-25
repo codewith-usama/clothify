@@ -128,7 +128,7 @@ class UserExploreScreen extends StatelessWidget {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
-                                          shop['tailorTiming'] ??
+                                          shop['availableTimings'] ??
                                               'Available Timings',
                                           style: const TextStyle(
                                             fontSize: 16,
