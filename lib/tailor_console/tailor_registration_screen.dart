@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
 import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
+import 'package:provider/provider.dart';
 
 class TailorRegistrationScreen extends StatelessWidget {
   const TailorRegistrationScreen({super.key});
@@ -203,60 +204,70 @@ class TailorRegistrationScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       SizedBox(
                         width: double.maxFinite,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState!.validate()) {
-                              // Collect all field values
-                              Map<String, String> tailorsRegistrationData = {
-                                'tailorEmail': emailController.text.trim(),
-                                'tailorPassword':
-                                    passwordController.text.trim(),
-                                'fullName': fullNameController.text.trim(),
-                                'shopName': shopNameController.text.trim(),
-                                'shopNumber': shopNumberController.text.trim(),
-                                'description': descController.text.trim(),
-                                'area': areaController.text.trim(),
-                                'city': cityController.text.trim(),
-                                'zipCode': zipCodeController.text.trim(),
-                                'availableTimings':
-                                    availableTimingsController.text.trim(),
-                                'typesOfCloths':
-                                    typesOfClothsController.text.trim(),
-                                'priceForEachTime':
-                                    priceForEachTimeController.text.trim(),
-                                'phoneNumber':
-                                    phoneNumberController.text.trim(),
-                                'profilePic': "",
-                              };
+                        child: Consumer<TailorAuthenticationVm>(
+                          builder: (context, value, _) => ElevatedButton(
+                            onPressed: () async {
+                              if (formKey.currentState!.validate()) {
+                                value.setLoading(true);
+                                // Collect all field values
+                                Map<String, String> tailorsRegistrationData = {
+                                  'tailorEmail': emailController.text.trim(),
+                                  'tailorPassword':
+                                      passwordController.text.trim(),
+                                  'fullName': fullNameController.text.trim(),
+                                  'shopName': shopNameController.text.trim(),
+                                  'shopNumber':
+                                      shopNumberController.text.trim(),
+                                  'description': descController.text.trim(),
+                                  'area': areaController.text.trim(),
+                                  'city': cityController.text.trim(),
+                                  'zipCode': zipCodeController.text.trim(),
+                                  'availableTimings':
+                                      availableTimingsController.text.trim(),
+                                  'typesOfCloths':
+                                      typesOfClothsController.text.trim(),
+                                  'priceForEachTime':
+                                      priceForEachTimeController.text.trim(),
+                                  'phoneNumber':
+                                      phoneNumberController.text.trim(),
+                                  'profilePic': "",
+                                };
 
-                              // Handle registration logic
-                              TailorAuthenticationVm tailorAuthenticationVM =
-                                  TailorAuthenticationVm();
-                              bool result = await tailorAuthenticationVM
-                                  .tailorRegistration(tailorsRegistrationData);
-                              if (result) {
-                                moveToTailorHomeMasterScreen();
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Registration failed. Please try again.'),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
+                                // Handle registration logic
+                                TailorAuthenticationVm tailorAuthenticationVM =
+                                    TailorAuthenticationVm();
+                                bool result = await tailorAuthenticationVM
+                                    .tailorRegistration(
+                                        tailorsRegistrationData);
+                                if (result) {
+                                  moveToTailorHomeMasterScreen();
+                                  value.setLoading(false);
+                                } else {
+                                  value.setLoading(false);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Registration failed. Please try again.'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
                               }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue, // Button color
-                            foregroundColor: Colors.white, // Text color
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue, // Button color
+                              foregroundColor: Colors.white, // Text color
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
                             ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
+                            child: value.loading
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white)
+                                : const Text('Register'),
                           ),
-                          child: const Text('Register'),
                         ),
                       ),
                     ],

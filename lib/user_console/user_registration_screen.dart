@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
 import 'package:fyp/user_console/user_home_master_screen.dart';
+import 'package:provider/provider.dart';
 
 class UserRegistrationScreen extends StatelessWidget {
   const UserRegistrationScreen({super.key});
@@ -123,54 +124,62 @@ class UserRegistrationScreen extends StatelessWidget {
                     const SizedBox(height: 30),
                     SizedBox(
                       width: double.maxFinite,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (formKey.currentState!.validate()) {
-                            String email = emailController.text.trim();
-                            String password = passwordController.text.trim();
-                            String fullName = fullNameController.text.trim();
-                            String phoneNumber =
-                                phoneNumberController.text.trim();
-                            String area = areaController.text.trim();
-                            String city = cityController.text.trim();
-                            String zipCode = zipCodeController.text.trim();
+                      child: Consumer<UserAuthenticationVM>(
+                        builder: (context, value, _) => ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState!.validate()) {
+                              value.setLoading(true);
+                              String email = emailController.text.trim();
+                              String password = passwordController.text.trim();
+                              String fullName = fullNameController.text.trim();
+                              String phoneNumber =
+                                  phoneNumberController.text.trim();
+                              String area = areaController.text.trim();
+                              String city = cityController.text.trim();
+                              String zipCode = zipCodeController.text.trim();
 
-                            final userRegistrationData = {
-                              'userEmail': email,
-                              'userPassword': password,
-                              'userFullName': fullName,
-                              'userPhoneNumber': phoneNumber,
-                              'userArea': area,
-                              'userCity': city,
-                              'userZipcode': zipCode,
-                              'profilePic': "",
-                            };
+                              final userRegistrationData = {
+                                'userEmail': email,
+                                'userPassword': password,
+                                'userFullName': fullName,
+                                'userPhoneNumber': phoneNumber,
+                                'userArea': area,
+                                'userCity': city,
+                                'userZipcode': zipCode,
+                                'profilePic': "",
+                              };
 
-                            UserAuthenticationVM userAuthenticationVM =
-                                UserAuthenticationVM();
-                            bool result = await userAuthenticationVM
-                                .userRegistration(userRegistrationData);
-                            if (result) {
-                              moveToUserHomeMasterScreen();
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  backgroundColor: Colors.red,
-                                  content: Text(
-                                      'Registration failed. Please try again.'),
-                                ),
-                              );
+                              UserAuthenticationVM userAuthenticationVM =
+                                  UserAuthenticationVM();
+                              bool result = await userAuthenticationVM
+                                  .userRegistration(userRegistrationData);
+                              if (result) {
+                                moveToUserHomeMasterScreen();
+                                value.setLoading(false);
+                              } else {
+                                value.setLoading(true);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Colors.red,
+                                    content: Text(
+                                        'Registration failed. Please try again.'),
+                                  ),
+                                );
+                              }
                             }
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
+                          child: value.loading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
+                              : const Text('Register'),
                         ),
-                        child: const Text('Register'),
                       ),
                     ),
                   ],

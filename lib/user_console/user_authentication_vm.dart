@@ -1,10 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-class UserAuthenticationVM {
+class UserAuthenticationVM extends ChangeNotifier {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  bool isLoading = false;
+
+  bool get loading => isLoading;
+
+  void setLoading(bool loading) {
+    isLoading = loading;
+    notifyListeners();
+  }
 
   Future<bool> userRegistration(Map<String, String> userData) async {
     try {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
 import 'package:fyp/user_console/user_home_master_screen.dart';
+import 'package:provider/provider.dart';
 
 class UserLoginScreen extends StatelessWidget {
   const UserLoginScreen({super.key});
@@ -53,34 +54,42 @@ class UserLoginScreen extends StatelessWidget {
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.maxFinite,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          String email = emailController.text.trim();
-                          String password = passwordController.text.trim();
+                    child: Consumer<UserAuthenticationVM>(
+                      builder: (context, value, _) => ElevatedButton(
+                        onPressed: () async {
+                          value.setLoading(true);
+                          if (formKey.currentState!.validate()) {
+                            String email = emailController.text.trim();
+                            String password = passwordController.text.trim();
 
-                          UserAuthenticationVM userAuthenticationVM =
-                              UserAuthenticationVM();
-                          bool result = await userAuthenticationVM.userLogin(
-                              email, password);
-                          if (result == true) {
-                            moveToUserHomeMasterScreen();
-                          } else {
-                            const ScaffoldMessenger(
-                                child: SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text('Some Error')));
+                            UserAuthenticationVM userAuthenticationVM =
+                                UserAuthenticationVM();
+                            bool result = await userAuthenticationVM.userLogin(
+                                email, password);
+                            if (result == true) {
+                              moveToUserHomeMasterScreen();
+                              value.setLoading(false);
+                            } else {
+                              value.setLoading(false);
+                              const ScaffoldMessenger(
+                                  child: SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('Some Error')));
+                            }
                           }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                        child: value.loading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
+                            : const Text('Login'),
                       ),
-                      child: const Text('Login'),
                     ),
                   ),
                 ],

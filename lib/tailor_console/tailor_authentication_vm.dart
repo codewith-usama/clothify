@@ -1,10 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-class TailorAuthenticationVm {
+class TailorAuthenticationVm extends ChangeNotifier {
   final CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('tailors');
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  bool isLoading = false;
+
+  bool get loading => isLoading;
+
+  void setLoading(bool loading) {
+    isLoading = loading;
+    notifyListeners();
+  }
 
   Future<bool> tailorRegistration(Map<String, String> tailorData) async {
     try {

@@ -9,6 +9,9 @@ class UserExploreDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Extracting recentOrders from shopDetails
+    List<dynamic> recentOrders = shopDetails['recentOrders'] ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(shopDetails['shopName'] ?? 'Shop Details'),
@@ -37,13 +40,12 @@ class UserExploreDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text('Recent Orders'),
-              const Image(
-                image: AssetImage('assets/image.jpg'),
-              ),
-              const SizedBox(height: 10),
-              const Image(
-                image: AssetImage('assets/image.jpg'),
-              ),
+              // Iterating over recentOrders to display each image
+              for (var order in recentOrders) 
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Image.network(order),
+                ),
             ],
           ),
         ),

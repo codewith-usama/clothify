@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
 import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
+import 'package:provider/provider.dart';
 
 class TailorLoginScreen extends StatelessWidget {
   const TailorLoginScreen({super.key});
@@ -53,34 +54,42 @@ class TailorLoginScreen extends StatelessWidget {
                   const SizedBox(height: 30),
                   SizedBox(
                     width: double.maxFinite,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (formKey.currentState!.validate()) {
-                          String email = emailController.text.trim();
-                          String password = passwordController.text.trim();
+                    child: Consumer<TailorAuthenticationVm>(
+                      builder: (context, value, _) => ElevatedButton(
+                        onPressed: () async {
+                          if (formKey.currentState!.validate()) {
+                            value.setLoading(true);
+                            String email = emailController.text.trim();
+                            String password = passwordController.text.trim();
 
-                          TailorAuthenticationVm tailorAuthenticationVm =
-                              TailorAuthenticationVm();
-                          bool result = await tailorAuthenticationVm
-                              .tailorLogin(email, password);
-                          if (result == true) {
-                            moveToTailorHomeMasterScreen();
-                          } else {
-                            const ScaffoldMessenger(
-                                child: SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text('Some Error')));
+                            TailorAuthenticationVm tailorAuthenticationVm =
+                                TailorAuthenticationVm();
+                            bool result = await tailorAuthenticationVm
+                                .tailorLogin(email, password);
+                            if (result == true) {
+                              moveToTailorHomeMasterScreen();
+                              value.setLoading(false);
+                            } else {
+                              value.setLoading(false);
+                              const ScaffoldMessenger(
+                                  child: SnackBar(
+                                      backgroundColor: Colors.red,
+                                      content: Text('Some Error')));
+                            }
                           }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                        child: value.loading
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
+                            : const Text('Login'),
                       ),
-                      child: const Text('Login'),
                     ),
                   ),
                 ],
