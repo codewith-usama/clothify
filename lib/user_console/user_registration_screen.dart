@@ -147,6 +147,7 @@ class UserRegistrationScreen extends StatelessWidget {
                                 'userCity': city,
                                 'userZipcode': zipCode,
                                 'profilePic': "",
+                                'id':"",
                               };
 
                               UserAuthenticationVM userAuthenticationVM =

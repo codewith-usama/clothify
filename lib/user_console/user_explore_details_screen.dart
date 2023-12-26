@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/user_console/user_message_screen.dart';
+import 'package:fyp/chat_screen.dart';
 
 class UserExploreDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> shopDetails;
@@ -12,9 +12,15 @@ class UserExploreDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> recentOrders = shopDetails['recentOrders'] ?? [];
-
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+    String getChatId(String userId, String tailorId) {
+      return userId.compareTo(tailorId) <= 0
+          ? "$userId-$tailorId"
+          : "$tailorId-$userId";
+    }
+
+    List<dynamic> recentOrders = shopDetails['recentOrders'] ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -49,9 +55,10 @@ class UserExploreDetailsScreen extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ChatScreen(
-                          userID: firebaseAuth.currentUser!.uid,
-                          tailorID: shopDetails['id'],
+                        builder: (context) => UserChatScreen(
+                          userId: shopDetails['id'],
+                          tailorId: getChatId(
+                              shopDetails['id'], firebaseAuth.currentUser!.uid),
                         ),
                       ),
                     ),

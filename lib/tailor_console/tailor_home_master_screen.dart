@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_master_view_model.dart';
-import 'package:fyp/tailor_console/tailor_message_screen.dart';
 import 'package:fyp/tailor_console/tailor_setting_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +20,7 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
     const Center(child: Text('Page 1')),
     const Center(child: Text('Page 2')),
     const Center(child: Text('Page 3')),
-    TailorConversationsScreen(tailorId: FirebaseAuth.instance.currentUser!.uid),
+    const Center(child: Text('Page 4')),
     const TailorSettingScreen(),
   ];
 

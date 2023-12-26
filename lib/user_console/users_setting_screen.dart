@@ -128,12 +128,12 @@ class _UsersSettingScreenState extends State<UsersSettingScreen> {
                   onTap: getImage,
                   child: CircleAvatar(
                     radius: 55,
-                    backgroundColor: Colors.blue,
-                    backgroundImage:
-                        imageUrl != null ? NetworkImage(imageUrl!) : null,
-                    child: imageUrl == null
+                    backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
+                        ? NetworkImage(imageUrl!)
+                        : null,
+                    child: imageUrl == null || imageUrl!.isEmpty
                         ? const Icon(Icons.person,
-                            size: 50, color: Colors.white)
+                            size: 80, color: Colors.white)
                         : null,
                   ),
                 ),

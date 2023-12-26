@@ -33,6 +33,8 @@ class UserAuthenticationVM extends ChangeNotifier {
           password: password,
         );
 
+        userData['id'] = userCredential.user!.uid;
+
         await usersCollection.doc(userCredential.user!.uid).set(userData);
 
         return true;

@@ -4,15 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
 import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:weekday_selector/weekday_selector.dart';
 
-class TailorRegistrationScreen extends StatelessWidget {
+class TailorRegistrationScreen extends StatefulWidget {
   const TailorRegistrationScreen({super.key});
 
   @override
+  State<TailorRegistrationScreen> createState() =>
+      _TailorRegistrationScreenState();
+}
+
+class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
+  @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-    // TextEditingControllers
+    final values = <bool?>[
+      null,
+      false,
+      true,
+      false,
+      true,
+      false,
+      null
+    ]; // TextEditingControllers
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     final TextEditingController fullNameController = TextEditingController();
@@ -155,17 +169,27 @@ class TailorRegistrationScreen extends StatelessWidget {
                             : 'Enter Zip Code',
                       ),
                       const SizedBox(height: 20),
-                      TextFormField(
-                        controller: availableTimingsController,
-                        decoration: const InputDecoration(
-                          label: Text("Enter Available Timings"),
-                          hintText: "Enter Available Days of the Week",
-                        ),
-                        validator: (value) => value != null && value.isNotEmpty
-                            ? null
-                            : 'Enter Available Timings',
+                      // TextFormField(
+                      //   controller: availableTimingsController,
+                      //   decoration: const InputDecoration(
+                      //     label: Text("Enter Available Timings"),
+                      //     hintText: "Enter Available Days of the Week",
+                      //   ),
+                      //   validator: (value) => value != null && value.isNotEmpty
+                      //       ? null
+                      //       : 'Enter Available Timings',
+                      // ),
+                      // const SizedBox(height: 20),
+                      WeekdaySelector(
+                        onChanged: (int v) {
+                          setState(() {
+                            values[v % 7] = !values[v % 7]!;
+                          });
+                        },
+                        selectedFillColor: Colors.amber,
+                        selectedColor: Colors.black,
+                        values: values,
                       ),
-                      const SizedBox(height: 20),
                       TextFormField(
                         controller: typesOfClothsController,
                         decoration: const InputDecoration(
