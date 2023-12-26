@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp/user_console/user_message_screen.dart';
 
 class UserExploreDetailsScreen extends StatelessWidget {
   final Map<String, dynamic> shopDetails;
@@ -12,6 +14,8 @@ class UserExploreDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     List<dynamic> recentOrders = shopDetails['recentOrders'] ?? [];
 
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(shopDetails['shopName'] ?? 'Shop Details'),
@@ -22,8 +26,6 @@ class UserExploreDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tailor Profile Picture
-
               Row(
                 children: [
                   const SizedBox(width: 10),
@@ -31,13 +33,32 @@ class UserExploreDetailsScreen extends StatelessWidget {
                       ? CircleAvatar(
                           radius: 50,
                           backgroundImage:
-                              NetworkImage(shopDetails['profilePic']))
+                              NetworkImage(shopDetails['profilePic']),
+                        )
                       : const CircleAvatar(
-                          child: Image(image: AssetImage('assets/icon.png'))),
+                          child: Image(
+                            image: AssetImage('assets/icon.png'),
+                          ),
+                        ),
                   const SizedBox(width: 30),
                   Text(
                     shopDetails['fullName'] ?? '',
                     style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(width: 20),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+                          userID: firebaseAuth.currentUser!.uid,
+                          tailorID: shopDetails['id'],
+                        ),
+                      ),
+                    ),
+                    icon: const Icon(
+                      Icons.message_outlined,
+                      size: 30,
+                    ),
                   ),
                 ],
               ),

@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp/user_console/user_conversation_screen.dart';
 import 'package:fyp/user_console/user_explore_screen.dart';
 import 'package:fyp/user_console/user_master_view_model.dart';
 import 'package:fyp/user_console/users_setting_screen.dart';
@@ -12,10 +14,13 @@ class UserHomeMasterScreen extends StatefulWidget {
 }
 
 class _UserHomeMasterScreenState extends State<UserHomeMasterScreen> {
+  late final FirebaseAuth firebaseAuth;
+
+  _UserHomeMasterScreenState() : firebaseAuth = FirebaseAuth.instance;
   final List<Widget> _pages = [
     const UserExploreScreen(),
     const Center(child: Text('Two')),
-    const Center(child: Text('Three')),
+    UserConversationsScreen(tailorId: FirebaseAuth.instance.currentUser!.uid),
     const UsersSettingScreen(),
   ];
 

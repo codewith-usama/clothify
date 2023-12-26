@@ -32,6 +32,7 @@ class TailorAuthenticationVm extends ChangeNotifier {
           email: tailorEmail,
           password: password,
         );
+        tailorData['id'] = userCredential.user!.uid;
 
         await usersCollection.doc(userCredential.user!.uid).set(tailorData);
 

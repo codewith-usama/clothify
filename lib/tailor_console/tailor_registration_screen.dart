@@ -232,6 +232,7 @@ class TailorRegistrationScreen extends StatelessWidget {
                                       phoneNumberController.text.trim(),
                                   'profilePic': "",
                                   'orderStatus': "open",
+                                  'id': "",
                                 };
 
                                 // Handle registration logic
