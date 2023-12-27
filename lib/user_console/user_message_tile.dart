@@ -1,23 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/data/model/chat_room_model.dart';
 import 'package:fyp/data/chat_room_page.dart';
+import 'package:fyp/data/model/chat_room_model.dart';
 import 'package:fyp/helper/firebase_helper.dart';
-import 'package:fyp/user_console/user_model.dart';
+import 'package:fyp/tailor_console/tailor_model.dart';
 
-class TailorMessagesTile extends StatefulWidget {
+class UserMessageTile extends StatefulWidget {
   final User user;
-  const TailorMessagesTile({
+  const UserMessageTile({
     super.key,
     required this.user,
   });
 
   @override
-  State<TailorMessagesTile> createState() => _TailorMessagesTileState();
+  State<UserMessageTile> createState() => _UserMessageTileState();
 }
 
-class _TailorMessagesTileState extends State<TailorMessagesTile> {
+class _UserMessageTileState extends State<UserMessageTile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,11 +58,13 @@ class _TailorMessagesTileState extends State<TailorMessagesTile> {
 
                     return FutureBuilder(
                       future:
-                          FirebaseHelper.getUserModelById(participantsKeys[0]),
-                      builder: (BuildContext context, userData) {
-                        if (userData.connectionState == ConnectionState.done) {
-                          if (userData.data != null) {
-                            UserModel targetUser = userData.data as UserModel;
+                          FirebaseHelper.getTailorModelById(participantsKeys[0]),
+                      builder: (BuildContext context, tailorData) {
+                        if (tailorData.connectionState ==
+                            ConnectionState.done) {
+                          if (tailorData.data != null) {
+                            TailorModel targetUser =
+                                tailorData.data as TailorModel;
 
                             return ListTile(
                               onTap: () {
@@ -77,9 +79,9 @@ class _TailorMessagesTileState extends State<TailorMessagesTile> {
                               leading: CircleAvatar(
                                 backgroundColor: Colors.grey.shade300,
                                 backgroundImage:
-                                    NetworkImage(userData.data!.profilePic!),
+                                    NetworkImage(tailorData.data!.profilePic!),
                               ),
-                              title: Text(targetUser.userFullName.toString()),
+                              title: Text(targetUser.fullName.toString()),
                               subtitle: (chatRoomModel.lastMessage
                                       .toString()
                                       .isEmpty)

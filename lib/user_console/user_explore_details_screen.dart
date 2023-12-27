@@ -57,7 +57,13 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
             widget.userModel.id.toString(): true,
             targetUser.id.toString(): true,
           },
+          users: [
+            widget.userModel.id.toString(),
+            targetUser.id.toString(),
+          ],
+          createdOn: DateTime.now(),
         );
+
         await FirebaseFirestore.instance
             .collection("chatrooms")
             .doc(newChatRoom.chatRoomId)

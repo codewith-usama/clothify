@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/user_console/user_explore_screen.dart';
 import 'package:fyp/user_console/user_master_view_model.dart';
+import 'package:fyp/user_console/user_message_tile.dart';
 import 'package:fyp/user_console/user_model.dart';
 import 'package:fyp/user_console/users_setting_screen.dart';
 import 'package:provider/provider.dart';
@@ -23,21 +24,21 @@ class _UserHomeMasterScreenState extends State<UserHomeMasterScreen> {
   late final FirebaseAuth firebaseAuth;
 
   _UserHomeMasterScreenState() : firebaseAuth = FirebaseAuth.instance;
-  final List<Widget> _pages = [
-    const UserExploreScreen(),
-    const Center(child: Text('Two')),
-    const Center(child: Text('Three')),
-    const UsersSettingScreen(),
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const UserExploreScreen(),
+      const Center(child: Text('Two')),
+      UserMessageTile(user: widget.user),
+      const UsersSettingScreen(),
+    ];
     return Scaffold(
       body: Consumer<UserMasterViewModel>(
         builder: (context, value, child) => Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            _pages[value.selectedPageIndex],
+            pages[value.selectedPageIndex],
             SafeArea(
               child: Card(
                 shape: StadiumBorder(

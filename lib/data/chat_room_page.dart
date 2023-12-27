@@ -83,7 +83,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
           .set(newMessage.toMap());
 
       widget.chatRoomModel.lastMessage = msg;
-      widget.chatRoomModel.createdOn = Timestamp.now();
+      widget.chatRoomModel.createdOn = DateTime.now();
 
       FirebaseFirestore.instance
           .collection("chatrooms")
@@ -135,7 +135,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                     .collection("messages")
                     .orderBy("createdOn", descending: true)
                     .snapshots(),
-                builder: (BuildContext context,
+                builder: (BuildContext context, 
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.connectionState == ConnectionState.active) {
                     if (snapshot.data != null &&

@@ -1,12 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class ChatRoomModel {
   String? chatRoomId;
   Map<String, dynamic>? participants;
   String? userId;
   String? tailorId;
   String? lastMessage;
-  Timestamp? createdOn;
+  DateTime? createdOn;
+  List<dynamic>? users;
 
   ChatRoomModel({
     this.chatRoomId,
@@ -15,6 +14,7 @@ class ChatRoomModel {
     this.tailorId,
     this.lastMessage,
     this.createdOn,
+    this.users,
   });
 
   ChatRoomModel.fromMap(Map<String, dynamic> map) {
@@ -23,7 +23,8 @@ class ChatRoomModel {
     userId = map['user_id'];
     tailorId = map['tailor_id'];
     lastMessage = map['last_message'];
-    createdOn = map['created_on'];
+    createdOn = map['created_on'].toDate();
+    users = map['users'];
   }
 
   Map<String, dynamic> toMap() => {
@@ -33,5 +34,6 @@ class ChatRoomModel {
         'tailor_id': tailorId,
         'last_message': lastMessage,
         'created_on': createdOn,
+        'users': users,
       };
 }
