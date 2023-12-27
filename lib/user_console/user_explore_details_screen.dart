@@ -3,8 +3,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/chat_room_model.dart';
-import 'package:fyp/chat_room_page.dart';
+import 'package:fyp/data/model/chat_room_model.dart';
+import 'package:fyp/data/chat_room_page.dart';
 import 'package:fyp/main.dart';
 import 'package:fyp/tailor_console/tailor_model.dart';
 import 'package:fyp/user_console/user_model.dart';
@@ -51,6 +51,8 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
         final ChatRoomModel newChatRoom = ChatRoomModel(
           chatRoomId: uuid.v1(),
           lastMessage: "",
+          userId: widget.userModel.id,
+          tailorId: widget.tailorModel.id,
           participants: {
             widget.userModel.id.toString(): true,
             targetUser.id.toString(): true,

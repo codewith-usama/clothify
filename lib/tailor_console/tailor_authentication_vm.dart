@@ -1,10 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:fyp/tailor_console/tailor_model.dart';
+import 'package:dartz/dartz.dart';
 
 class TailorAuthenticationVm extends ChangeNotifier {
   final CollectionReference usersCollection =
@@ -13,6 +11,9 @@ class TailorAuthenticationVm extends ChangeNotifier {
 
   bool isLoading = false;
 
+  TailorModel? tailorModel1;
+  User? user;
+
   bool get loading => isLoading;
 
   void setLoading(bool loading) {
@@ -20,8 +21,8 @@ class TailorAuthenticationVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> tailorRegistration(
-      Map<String, String> tailorData, BuildContext context) async {
+  Future<Either<bool, String>> tailorRegistration(
+      Map<String, String> tailorData) async {
     try {
       String tailorEmail = tailorData['tailorEmail'] ?? '';
       String password = tailorData['tailorPassword'] ?? '';
@@ -39,49 +40,47 @@ class TailorAuthenticationVm extends ChangeNotifier {
         );
         tailorData['id'] = userCredential.user!.uid;
         TailorModel tailorModel = TailorModel.fromMap(tailorData);
+        tailorModel1 = tailorModel;
+        user = userCredential.user;
 
-        await usersCollection
-            .doc(userCredential.user!.uid)
-            .set(tailorData)
-            .then((value) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => TailorHomeMasterScreen(
-                user: userCredential.user!,
-                tailorModel: tailorModel,
-              ),
-            ),
-          );
-        });
-      } else {}
-    } catch (e) {
-      Text(e.toString());
+        await usersCollection.doc(userCredential.user!.uid).set(tailorData);
+        return left(true);
+      } else {
+        return right('Some error occured');
+      }
+    } on FirebaseAuthException catch (e) {
+      setLoading(false);
+
+      return right(e.message.toString());
     }
   }
 
-  Future<void> tailorLogin(
-      String email, String password, BuildContext context) async {
+  Future<Either<bool, String>> tailorLogin(
+      String email, String password) async {
     try {
-      await firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-
-      UserCredential? userCredential;
-      String id = userCredential!.user!.uid;
+      UserCredential userCredential =
+          await firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      String id = userCredential.user!.uid;
 
       DocumentSnapshot tailorData =
           await FirebaseFirestore.instance.collection("tailors").doc(id).get();
 
-      TailorModel tailorModel =
-          TailorModel.fromMap(tailorData as Map<String, dynamic>);
+      Map<String, dynamic>? data = tailorData.data() as Map<String, dynamic>?;
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => TailorHomeMasterScreen(
-              user: userCredential.user!, tailorModel: tailorModel),
-        ),
-      );
-    } catch (e) {
-      Text(e.toString());
+      if (data != null) {
+        TailorModel tailorModel = TailorModel.fromMap(data);
+        tailorModel1 = tailorModel;
+        user = userCredential.user;
+        return left(true);
+      } else {
+        return right('Data in null');
+      }
+    } on FirebaseAuthException catch (e) {
+      setLoading(false);
+      return right(e.message.toString());
     }
   }
 }

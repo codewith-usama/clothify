@@ -1,9 +1,7 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/user_console/user_home_master_screen.dart';
 import 'package:fyp/user_console/user_model.dart';
 
 class UserAuthenticationVM extends ChangeNotifier {
@@ -15,13 +13,16 @@ class UserAuthenticationVM extends ChangeNotifier {
 
   bool get loading => isLoading;
 
+  UserModel? userModel1;
+  User? user;
+
   void setLoading(bool loading) {
     isLoading = loading;
     notifyListeners();
   }
 
-  Future<void> userRegistration(
-      Map<String, String> userData, BuildContext context) async {
+  Future<Either<bool, String>> userRegistration(
+      Map<String, String> userData) async {
     try {
       String userEmail = userData['userEmail'] ?? '';
       String password = userData['userPassword'] ?? '';
@@ -40,35 +41,20 @@ class UserAuthenticationVM extends ChangeNotifier {
 
         userData['id'] = userCredential.user!.uid;
         UserModel userModel = UserModel.fromMap(userData);
-        print('2');
-        await usersCollection
-            .doc(userCredential.user!.uid)
-            .set(userData)
-            .then((value) {
-          print('3');
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) {
-                print('1');
-                return UserHomeMasterScreen(
-                  user: userCredential.user!,
-                  userModel: userModel,
-                );
-              },
-            ),
-          );
-        });
+        userModel1 = userModel;
+        user = userCredential.user;
+        await usersCollection.doc(userCredential.user!.uid).set(userData);
+        return left(true);
       } else {
-        print('4');
+        return right('Some error occured');
       }
-    } catch (e) {
-      print('5');
-      Text(e.toString());
+    } on FirebaseAuthException catch (e) {
+      setLoading(false);
+      return right(e.message.toString());
     }
   }
 
-  Future<bool> userLogin(
-      String email, String password, BuildContext context) async {
+  Future<Either<bool, String>> userLogin(String email, String password) async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -79,18 +65,18 @@ class UserAuthenticationVM extends ChangeNotifier {
       DocumentSnapshot userData =
           await FirebaseFirestore.instance.collection("users").doc(id).get();
 
-      UserModel userModel = UserModel.fromMap(userData as Map<String, dynamic>);
+      Map<String, dynamic>? data = userData.data() as Map<String, dynamic>?;
 
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => UserHomeMasterScreen(
-              user: userCredential.user!, userModel: userModel),
-        ),
-      );
-
-      return true;
-    } catch (e) {
-      return false;
+      if (data != null) {
+        UserModel userModel = UserModel.fromMap(data);
+        userModel1 = userModel;
+        user = userCredential.user;
+        return left(true);
+      } else {
+        return right('Data in null');
+      }
+    } on FirebaseAuthException catch (e) {
+      return right(e.message.toString());
     }
   }
 }

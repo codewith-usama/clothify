@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fyp/helper/ui_helper.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
+import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:provider/provider.dart';
 
 class TailorLoginScreen extends StatelessWidget {
@@ -55,10 +57,22 @@ class TailorLoginScreen extends StatelessWidget {
                             String email = emailController.text.trim();
                             String password = passwordController.text.trim();
 
-                            TailorAuthenticationVm tailorAuthenticationVm =
-                                TailorAuthenticationVm();
-                            await tailorAuthenticationVm.tailorLogin(
-                                email, password, context);
+                            await value.tailorLogin(email, password).then(
+                                  (result) => result.fold(
+                                    (l) =>
+                                        Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            TailorHomeMasterScreen(
+                                          user: value.user!,
+                                          tailorModel: value.tailorModel1!,
+                                        ),
+                                      ),
+                                    ),
+                                    (r) => UIHelper.showAlertDialog(
+                                        context, 'Login Failed', r),
+                                  ),
+                                );
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -69,8 +83,12 @@ class TailorLoginScreen extends StatelessWidget {
                               horizontal: 20, vertical: 10),
                         ),
                         child: value.loading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white)
+                            ? const SizedBox(
+                                width: 25,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                    color: Colors.white),
+                              )
                             : const Text('Login'),
                       ),
                     ),

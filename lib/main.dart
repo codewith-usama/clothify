@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/firebase_options.dart';
-import 'package:fyp/splash_screen.dart';
+import 'package:fyp/data/firebase_options.dart';
+import 'package:fyp/initial/splash_screen.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
 import 'package:fyp/tailor_console/tailor_master_view_model.dart';
 import 'package:fyp/theme.dart';

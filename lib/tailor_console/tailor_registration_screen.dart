@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:fyp/helper/ui_helper.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
+import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:provider/provider.dart';
 
 class TailorRegistrationScreen extends StatefulWidget {
@@ -251,16 +253,28 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                                   'id': "",
                                 };
 
-                                // Handle registration logic
-                                TailorAuthenticationVm tailorAuthenticationVM =
-                                    TailorAuthenticationVm();
-                                await tailorAuthenticationVM.tailorRegistration(
-                                    tailorsRegistrationData, context);
+                                await value
+                                    .tailorRegistration(
+                                        tailorsRegistrationData)
+                                    .then(
+                                      (result) => result.fold(
+                                        (l) => Navigator.of(context)
+                                            .pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TailorHomeMasterScreen(
+                                              user: value.user!,
+                                              tailorModel: value.tailorModel1!,
+                                            ),
+                                          ),
+                                        ),
+                                        (r) => UIHelper.showAlertDialog(
+                                            context, 'Signup Failed', r),
+                                      ),
+                                    );
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue, // Button color
-                              foregroundColor: Colors.white, // Text color
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -268,8 +282,12 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                                   horizontal: 20, vertical: 12),
                             ),
                             child: value.loading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white)
+                                ? const SizedBox(
+                                    width: 25,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        color: Colors.white),
+                                  )
                                 : const Text('Register'),
                           ),
                         ),

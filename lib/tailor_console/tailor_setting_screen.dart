@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/select_screen.dart';
+import 'package:fyp/initial/select_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class TailorSettingScreen extends StatefulWidget {
@@ -31,8 +31,8 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
   @override
   void initState() {
     super.initState();
-    fetchProfileImage();
     fetchUserData();
+    fetchProfileImage();
   }
 
   Future<void> fetchUserData() async {
@@ -46,7 +46,7 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
 
       setState(() {
         if (userData?.containsKey('orderStatus') ?? false) {
-          isOrderActive = userData!['orderStatus'] == 'open';
+          isOrderActive = userData!['orderStatus'] == 'Open';
         }
         fullName = userData?['fullName'];
         email = userData?['tailorEmail'];

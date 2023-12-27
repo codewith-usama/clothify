@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:fyp/helper/ui_helper.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
+import 'package:fyp/user_console/user_home_master_screen.dart';
 import 'package:provider/provider.dart';
 
 class UserRegistrationScreen extends StatelessWidget {
@@ -145,8 +147,24 @@ class UserRegistrationScreen extends StatelessWidget {
 
                               UserAuthenticationVM userAuthenticationVM =
                                   UserAuthenticationVM();
-                              await userAuthenticationVM.userRegistration(
-                                  userRegistrationData, context);
+                              await userAuthenticationVM
+                                  .userRegistration(userRegistrationData)
+                                  .then(
+                                    (result) => result.fold(
+                                      (l) =>
+                                          Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UserHomeMasterScreen(
+                                            user: value.user!,
+                                            userModel: value.userModel1!,
+                                          ),
+                                        ),
+                                      ),
+                                      (r) => UIHelper.showAlertDialog(
+                                          context, 'Signup Failed', r),
+                                    ),
+                                  );
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -157,8 +175,12 @@ class UserRegistrationScreen extends StatelessWidget {
                                 horizontal: 20, vertical: 10),
                           ),
                           child: value.loading
-                              ? const CircularProgressIndicator(
-                                  color: Colors.white)
+                              ? const SizedBox(
+                                  width: 25,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                      color: Colors.white),
+                                )
                               : const Text('Register'),
                         ),
                       ),
