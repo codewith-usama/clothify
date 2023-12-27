@@ -1,30 +1,74 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/chat_screen.dart';
+import 'package:fyp/chat_room_model.dart';
+import 'package:fyp/chat_room_page.dart';
+import 'package:fyp/main.dart';
+import 'package:fyp/tailor_console/tailor_model.dart';
+import 'package:fyp/user_console/user_model.dart';
 
-class UserExploreDetailsScreen extends StatelessWidget {
+class UserExploreDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> shopDetails;
+  final UserModel userModel;
+  final TailorModel tailorModel;
+  final User user;
 
   const UserExploreDetailsScreen({
     Key? key,
     required this.shopDetails,
+    required this.userModel,
+    required this.tailorModel,
+    required this.user,
   }) : super(key: key);
 
   @override
+  State<UserExploreDetailsScreen> createState() =>
+      _UserExploreDetailsScreenState();
+}
+
+class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
+  @override
   Widget build(BuildContext context) {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    List<dynamic> recentOrders = widget.shopDetails['recentOrders'] ?? [];
 
-    String getChatId(String userId, String tailorId) {
-      return userId.compareTo(tailorId) <= 0
-          ? "$userId-$tailorId"
-          : "$tailorId-$userId";
+    Future<ChatRoomModel?> getChatRoomModel(TailorModel targetUser) async {
+      final ChatRoomModel? chatRoomModel;
+
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection("chatrooms")
+          .where("participants.${widget.userModel.id}", isEqualTo: true)
+          .where("participants.${targetUser.id}", isEqualTo: true)
+          .get();
+      if (snapshot.docs.isNotEmpty) {
+        var docData = snapshot.docs[0].data();
+        final ChatRoomModel existingChatRoom =
+            ChatRoomModel.fromMap(docData as Map<String, dynamic>);
+
+        chatRoomModel = existingChatRoom;
+      } else {
+        final ChatRoomModel newChatRoom = ChatRoomModel(
+          chatRoomId: uuid.v1(),
+          lastMessage: "",
+          participants: {
+            widget.userModel.id.toString(): true,
+            targetUser.id.toString(): true,
+          },
+        );
+        await FirebaseFirestore.instance
+            .collection("chatrooms")
+            .doc(newChatRoom.chatRoomId)
+            .set(newChatRoom.toMap());
+
+        chatRoomModel = newChatRoom;
+      }
+      return chatRoomModel;
     }
-
-    List<dynamic> recentOrders = shopDetails['recentOrders'] ?? [];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(shopDetails['shopName'] ?? 'Shop Details'),
+        title: Text(widget.shopDetails['shopName'] ?? 'Shop Details'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -35,11 +79,11 @@ class UserExploreDetailsScreen extends StatelessWidget {
               Row(
                 children: [
                   const SizedBox(width: 10),
-                  shopDetails['profilePic'] != null
+                  widget.shopDetails['profilePic'] != null
                       ? CircleAvatar(
                           radius: 50,
                           backgroundImage:
-                              NetworkImage(shopDetails['profilePic']),
+                              NetworkImage(widget.shopDetails['profilePic']),
                         )
                       : const CircleAvatar(
                           child: Image(
@@ -48,20 +92,25 @@ class UserExploreDetailsScreen extends StatelessWidget {
                         ),
                   const SizedBox(width: 30),
                   Text(
-                    shopDetails['fullName'] ?? '',
+                    widget.shopDetails['fullName'] ?? '',
                     style: const TextStyle(fontSize: 28),
                   ),
                   const SizedBox(width: 20),
                   IconButton(
-                    onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => UserChatScreen(
-                          userId: shopDetails['id'],
-                          tailorId: getChatId(
-                              shopDetails['id'], firebaseAuth.currentUser!.uid),
-                        ),
-                      ),
-                    ),
+                    onPressed: () async {
+                      ChatRoomModel? chatRoomModel =
+                          await getChatRoomModel(widget.tailorModel);
+                      if (chatRoomModel != null) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ChatRoomPage(
+                              chatRoomModel: chatRoomModel,
+                              firebaseUser: widget.user,
+                            ),
+                          ),
+                        );
+                      }
+                    },
                     icon: const Icon(
                       Icons.message_outlined,
                       size: 30,
@@ -75,7 +124,7 @@ class UserExploreDetailsScreen extends StatelessWidget {
               const Text('Description',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               Text(
-                shopDetails['description'] ?? '',
+                widget.shopDetails['description'] ?? '',
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 10),
@@ -83,7 +132,7 @@ class UserExploreDetailsScreen extends StatelessWidget {
               const Text('Phone Number',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               Text(
-                shopDetails['phoneNumber'] ?? '',
+                widget.shopDetails['phoneNumber'] ?? '',
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 10),
@@ -91,7 +140,7 @@ class UserExploreDetailsScreen extends StatelessWidget {
               const Text('Area',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               Text(
-                shopDetails['area'] ?? '',
+                widget.shopDetails['area'] ?? '',
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 10),
@@ -99,7 +148,7 @@ class UserExploreDetailsScreen extends StatelessWidget {
               const Text('Available Timing',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               Text(
-                shopDetails['availableTimings'] ?? '',
+                widget.shopDetails['availableTimings'] ?? '',
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 10),

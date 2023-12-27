@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
-import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:provider/provider.dart';
 
 class TailorLoginScreen extends StatelessWidget {
@@ -8,12 +7,6 @@ class TailorLoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void moveToTailorHomeMasterScreen() {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const TailorHomeMasterScreen()),
-      );
-    }
-
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
@@ -64,18 +57,8 @@ class TailorLoginScreen extends StatelessWidget {
 
                             TailorAuthenticationVm tailorAuthenticationVm =
                                 TailorAuthenticationVm();
-                            bool result = await tailorAuthenticationVm
-                                .tailorLogin(email, password);
-                            if (result == true) {
-                              moveToTailorHomeMasterScreen();
-                              value.setLoading(false);
-                            } else {
-                              value.setLoading(false);
-                              const ScaffoldMessenger(
-                                  child: SnackBar(
-                                      backgroundColor: Colors.red,
-                                      content: Text('Some Error')));
-                            }
+                            await tailorAuthenticationVm.tailorLogin(
+                                email, password, context);
                           }
                         },
                         style: ElevatedButton.styleFrom(

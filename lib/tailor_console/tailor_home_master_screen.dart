@@ -1,11 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_master_view_model.dart';
+import 'package:fyp/tailor_console/tailor_messages_tile.dart';
+import 'package:fyp/tailor_console/tailor_model.dart';
 import 'package:fyp/tailor_console/tailor_setting_screen.dart';
 import 'package:provider/provider.dart';
 
 class TailorHomeMasterScreen extends StatefulWidget {
-  const TailorHomeMasterScreen({super.key});
+  final TailorModel tailorModel;
+  final User user;
+
+  const TailorHomeMasterScreen({
+    super.key,
+    required this.user,
+    required this.tailorModel,
+  });
 
   @override
   State<TailorHomeMasterScreen> createState() => _TailorHomeMasterScreenState();
@@ -16,23 +25,22 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
 
   _TailorHomeMasterScreenState() : firebaseAuth = FirebaseAuth.instance;
 
-  final List<Widget> _pages = [
-    const Center(child: Text('Page 1')),
-    const Center(child: Text('Page 2')),
-    const Center(child: Text('Page 3')),
-    const Center(child: Text('Page 4')),
-    const TailorSettingScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const Center(child: Text('Page 1')),
+      const Center(child: Text('Page 2')),
+      const Center(child: Text('Page 3')),
+      TailorMessagesTile(user: widget.user),
+      const TailorSettingScreen(),
+    ];
     return Scaffold(
       body: Consumer<TailorMasterViewModel>(
         builder: (context, value, _) {
           return Stack(
             alignment: Alignment.bottomCenter,
             children: [
-              _pages[value.selectedPageIndex],
+              pages[value.selectedPageIndex],
               SafeArea(
                 child: Card(
                   shape: StadiumBorder(

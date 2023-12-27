@@ -8,7 +8,9 @@ import 'package:fyp/theme.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
 import 'package:fyp/user_console/user_master_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
+var uuid = const Uuid();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

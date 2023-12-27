@@ -2,11 +2,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/user_console/user_explore_screen.dart';
 import 'package:fyp/user_console/user_master_view_model.dart';
+import 'package:fyp/user_console/user_model.dart';
 import 'package:fyp/user_console/users_setting_screen.dart';
 import 'package:provider/provider.dart';
 
 class UserHomeMasterScreen extends StatefulWidget {
-  const UserHomeMasterScreen({super.key});
+  final UserModel userModel;
+  final User user;
+  const UserHomeMasterScreen({
+    super.key,
+    required this.user,
+    required this.userModel,
+  });
 
   @override
   State<UserHomeMasterScreen> createState() => _UserHomeMasterScreenState();

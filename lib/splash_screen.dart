@@ -2,9 +2,12 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp/firebase_helper.dart';
 import 'package:fyp/select_screen.dart';
 import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
+import 'package:fyp/tailor_console/tailor_model.dart';
 import 'package:fyp/user_console/user_home_master_screen.dart';
+import 'package:fyp/user_console/user_model.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -33,12 +36,19 @@ class _SplashScreenState extends State<SplashScreen> {
       DocumentSnapshot inUsersCollection =
           await firebaseFirestore.collection('users').doc(user.uid).get();
       if (inUsersCollection.exists) {
-        navigateToUser();
+        UserModel? userModel = await FirebaseHelper.getUserModelById(user.uid);
+        if (userModel != null) {
+          navigateToUser(user, userModel);
+        }
       }
       DocumentSnapshot inTailorsCollection =
           await firebaseFirestore.collection('tailors').doc(user.uid).get();
       if (inTailorsCollection.exists) {
-        navigateToTailor();
+        TailorModel? tailorModel =
+            await FirebaseHelper.getTailorModelById(user.uid);
+        if (tailorModel != null) {
+          navigateToTailor(user, tailorModel);
+        }
       }
     } else {
       Navigator.of(context).pushReplacement(
@@ -46,14 +56,20 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  void navigateToUser() {
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const UserHomeMasterScreen()));
+  void navigateToUser(User user, UserModel userModel) async {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => UserHomeMasterScreen(
+              user: user,
+              userModel: userModel,
+            )));
   }
 
-  void navigateToTailor() {
+  void navigateToTailor(User user, TailorModel tailorModel) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => const TailorHomeMasterScreen()));
+        builder: (context) => TailorHomeMasterScreen(
+              user: user,
+              tailorModel: tailorModel,
+            )));
   }
 
   @override

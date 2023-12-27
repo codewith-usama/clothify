@@ -1,6 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
+import 'package:fyp/tailor_console/tailor_model.dart';
 
 class TailorAuthenticationVm extends ChangeNotifier {
   final CollectionReference usersCollection =
@@ -16,7 +20,8 @@ class TailorAuthenticationVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> tailorRegistration(Map<String, String> tailorData) async {
+  Future<void> tailorRegistration(
+      Map<String, String> tailorData, BuildContext context) async {
     try {
       String tailorEmail = tailorData['tailorEmail'] ?? '';
       String password = tailorData['tailorPassword'] ?? '';
@@ -33,25 +38,50 @@ class TailorAuthenticationVm extends ChangeNotifier {
           password: password,
         );
         tailorData['id'] = userCredential.user!.uid;
+        TailorModel tailorModel = TailorModel.fromMap(tailorData);
 
-        await usersCollection.doc(userCredential.user!.uid).set(tailorData);
-
-        return true;
-      } else {
-        return false;
-      }
+        await usersCollection
+            .doc(userCredential.user!.uid)
+            .set(tailorData)
+            .then((value) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => TailorHomeMasterScreen(
+                user: userCredential.user!,
+                tailorModel: tailorModel,
+              ),
+            ),
+          );
+        });
+      } else {}
     } catch (e) {
-      return false;
+      Text(e.toString());
     }
   }
 
-  Future<bool> tailorLogin(String email, String password) async {
+  Future<void> tailorLogin(
+      String email, String password, BuildContext context) async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      return true;
+
+      UserCredential? userCredential;
+      String id = userCredential!.user!.uid;
+
+      DocumentSnapshot tailorData =
+          await FirebaseFirestore.instance.collection("tailors").doc(id).get();
+
+      TailorModel tailorModel =
+          TailorModel.fromMap(tailorData as Map<String, dynamic>);
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => TailorHomeMasterScreen(
+              user: userCredential.user!, tailorModel: tailorModel),
+        ),
+      );
     } catch (e) {
-      return false;
+      Text(e.toString());
     }
   }
 }

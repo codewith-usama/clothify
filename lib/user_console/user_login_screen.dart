@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
-import 'package:fyp/user_console/user_home_master_screen.dart';
 import 'package:provider/provider.dart';
 
 class UserLoginScreen extends StatelessWidget {
@@ -8,12 +7,6 @@ class UserLoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void moveToUserHomeMasterScreen() {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const UserHomeMasterScreen()),
-      );
-    }
-
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
@@ -64,18 +57,8 @@ class UserLoginScreen extends StatelessWidget {
 
                             UserAuthenticationVM userAuthenticationVM =
                                 UserAuthenticationVM();
-                            bool result = await userAuthenticationVM.userLogin(
-                                email, password);
-                            if (result == true) {
-                              moveToUserHomeMasterScreen();
-                              value.setLoading(false);
-                            } else {
-                              value.setLoading(false);
-                              const ScaffoldMessenger(
-                                  child: SnackBar(
-                                      backgroundColor: Colors.red,
-                                      content: Text('Some Error')));
-                            }
+                            await userAuthenticationVM.userLogin(
+                                email, password, context);
                           }
                         },
                         style: ElevatedButton.styleFrom(

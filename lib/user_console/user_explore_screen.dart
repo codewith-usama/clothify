@@ -1,25 +1,45 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp/firebase_helper.dart';
+import 'package:fyp/tailor_console/tailor_model.dart';
 import 'package:fyp/user_console/user_explore_details_screen.dart';
+import 'package:fyp/user_console/user_model.dart';
 
-class UserExploreScreen extends StatelessWidget {
+class UserExploreScreen extends StatefulWidget {
   const UserExploreScreen({super.key});
+
+  @override
+  State<UserExploreScreen> createState() => _UserExploreScreenState();
+}
+
+class _UserExploreScreenState extends State<UserExploreScreen> {
+  UserModel? userModel;
+  TailorModel? tailorModel;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final userId = FirebaseAuth.instance.currentUser!.uid;
+  User? user = FirebaseAuth.instance.currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    getModels();
+  }
+
+  void getModels() async {
+    userModel = await FirebaseHelper.getUserModelById(userId);
+  }
+
+  Future<TailorModel?> getTailorModel(String id) async =>
+      await FirebaseHelper.getTailorModelById(id);
 
   @override
   Widget build(BuildContext context) {
     // Get the current user's ID from Firebase Authentication
-    final userId = FirebaseAuth.instance.currentUser?.uid;
 
     // Check if the user is logged in
-    if (userId == null) {
-      return const Scaffold(
-        body: SafeArea(
-          child: Center(child: Text('User not logged in')),
-        ),
-      );
-    }
-
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<DocumentSnapshot>(
@@ -64,13 +84,21 @@ class UserExploreScreen extends StatelessWidget {
                         shopDocuments[index].data() as Map<String, dynamic>;
 
                     return InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => UserExploreDetailsScreen(
-                            shopDetails: shop,
-                          ),
-                        ),
-                      ),
+                      onTap: () async {
+                        tailorModel = await getTailorModel(shop['id']);
+                        if (tailorModel != null) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => UserExploreDetailsScreen(
+                                shopDetails: shop,
+                                userModel: userModel!,
+                                tailorModel: tailorModel!,
+                                user: user!,
+                              ),
+                            ),
+                          );
+                        }
+                      },
                       child: Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),

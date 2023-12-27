@@ -2,9 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
-import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:weekday_selector/weekday_selector.dart';
 
 class TailorRegistrationScreen extends StatefulWidget {
   const TailorRegistrationScreen({super.key});
@@ -18,15 +16,15 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    final values = <bool?>[
-      null,
-      false,
-      true,
-      false,
-      true,
-      false,
-      null
-    ]; // TextEditingControllers
+    // final values = <bool?>[
+    //   null,
+    //   false,
+    //   true,
+    //   false,
+    //   true,
+    //   false,
+    //   null
+    // ]; // TextEditingControllers
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     final TextEditingController fullNameController = TextEditingController();
@@ -43,12 +41,6 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
     final TextEditingController priceForEachTimeController =
         TextEditingController();
     final TextEditingController phoneNumberController = TextEditingController();
-
-    void moveToTailorHomeMasterScreen() async {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const TailorHomeMasterScreen()),
-      );
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -169,27 +161,27 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                             : 'Enter Zip Code',
                       ),
                       const SizedBox(height: 20),
-                      // TextFormField(
-                      //   controller: availableTimingsController,
-                      //   decoration: const InputDecoration(
-                      //     label: Text("Enter Available Timings"),
-                      //     hintText: "Enter Available Days of the Week",
-                      //   ),
-                      //   validator: (value) => value != null && value.isNotEmpty
-                      //       ? null
-                      //       : 'Enter Available Timings',
-                      // ),
-                      // const SizedBox(height: 20),
-                      WeekdaySelector(
-                        onChanged: (int v) {
-                          setState(() {
-                            values[v % 7] = !values[v % 7]!;
-                          });
-                        },
-                        selectedFillColor: Colors.amber,
-                        selectedColor: Colors.black,
-                        values: values,
+                      TextFormField(
+                        controller: availableTimingsController,
+                        decoration: const InputDecoration(
+                          label: Text("Enter Available Timings"),
+                          hintText: "Enter Available Days of the Week",
+                        ),
+                        validator: (value) => value != null && value.isNotEmpty
+                            ? null
+                            : 'Enter Available Timings',
                       ),
+                      const SizedBox(height: 20),
+                      // WeekdaySelector(
+                      //   onChanged: (int v) {
+                      //     setState(() {
+                      //       values[v % 7] = !values[v % 7]!;
+                      //     });
+                      //   },
+                      //   selectedFillColor: Colors.amber,
+                      //   selectedColor: Colors.black,
+                      //   values: values,
+                      // ),
                       TextFormField(
                         controller: typesOfClothsController,
                         decoration: const InputDecoration(
@@ -262,22 +254,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                                 // Handle registration logic
                                 TailorAuthenticationVm tailorAuthenticationVM =
                                     TailorAuthenticationVm();
-                                bool result = await tailorAuthenticationVM
-                                    .tailorRegistration(
-                                        tailorsRegistrationData);
-                                if (result) {
-                                  moveToTailorHomeMasterScreen();
-                                  value.setLoading(false);
-                                } else {
-                                  value.setLoading(false);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Registration failed. Please try again.'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
+                                await tailorAuthenticationVM.tailorRegistration(
+                                    tailorsRegistrationData, context);
                               }
                             },
                             style: ElevatedButton.styleFrom(

@@ -17,6 +17,7 @@ dependencies:
   image_picker: ^1.0.5
   firebase_storage: ^11.5.6
   weekday_selector: ^1.1.0
+  uuid: ^4.2.2
 
 dev_dependencies:
   flutter_test:

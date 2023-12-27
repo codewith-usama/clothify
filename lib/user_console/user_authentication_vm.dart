@@ -1,6 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp/user_console/user_home_master_screen.dart';
+import 'package:fyp/user_console/user_model.dart';
 
 class UserAuthenticationVM extends ChangeNotifier {
   final CollectionReference usersCollection =
@@ -16,7 +20,8 @@ class UserAuthenticationVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> userRegistration(Map<String, String> userData) async {
+  Future<void> userRegistration(
+      Map<String, String> userData, BuildContext context) async {
     try {
       String userEmail = userData['userEmail'] ?? '';
       String password = userData['userPassword'] ?? '';
@@ -34,22 +39,55 @@ class UserAuthenticationVM extends ChangeNotifier {
         );
 
         userData['id'] = userCredential.user!.uid;
-
-        await usersCollection.doc(userCredential.user!.uid).set(userData);
-
-        return true;
+        UserModel userModel = UserModel.fromMap(userData);
+        print('2');
+        await usersCollection
+            .doc(userCredential.user!.uid)
+            .set(userData)
+            .then((value) {
+          print('3');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) {
+                print('1');
+                return UserHomeMasterScreen(
+                  user: userCredential.user!,
+                  userModel: userModel,
+                );
+              },
+            ),
+          );
+        });
       } else {
-        return false;
+        print('4');
       }
     } catch (e) {
-      return false;
+      print('5');
+      Text(e.toString());
     }
   }
 
-  Future<bool> userLogin(String email, String password) async {
+  Future<bool> userLogin(
+      String email, String password, BuildContext context) async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+
+      UserCredential? userCredential;
+      String id = userCredential!.user!.uid;
+
+      DocumentSnapshot userData =
+          await FirebaseFirestore.instance.collection("users").doc(id).get();
+
+      UserModel userModel = UserModel.fromMap(userData as Map<String, dynamic>);
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => UserHomeMasterScreen(
+              user: userCredential.user!, userModel: userModel),
+        ),
+      );
+
       return true;
     } catch (e) {
       return false;

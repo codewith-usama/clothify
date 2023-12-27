@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
-import 'package:fyp/user_console/user_home_master_screen.dart';
 import 'package:provider/provider.dart';
 
 class UserRegistrationScreen extends StatelessWidget {
@@ -19,12 +18,6 @@ class UserRegistrationScreen extends StatelessWidget {
     final TextEditingController areaController = TextEditingController();
     final TextEditingController cityController = TextEditingController();
     final TextEditingController zipCodeController = TextEditingController();
-
-    void moveToUserHomeMasterScreen() {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const UserHomeMasterScreen()),
-      );
-    }
 
     return Scaffold(
       body: SafeArea(
@@ -147,26 +140,13 @@ class UserRegistrationScreen extends StatelessWidget {
                                 'userCity': city,
                                 'userZipcode': zipCode,
                                 'profilePic': "",
-                                'id':"",
+                                'id': "",
                               };
 
                               UserAuthenticationVM userAuthenticationVM =
                                   UserAuthenticationVM();
-                              bool result = await userAuthenticationVM
-                                  .userRegistration(userRegistrationData);
-                              if (result) {
-                                moveToUserHomeMasterScreen();
-                                value.setLoading(false);
-                              } else {
-                                value.setLoading(true);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    backgroundColor: Colors.red,
-                                    content: Text(
-                                        'Registration failed. Please try again.'),
-                                  ),
-                                );
-                              }
+                              await userAuthenticationVM.userRegistration(
+                                  userRegistrationData, context);
                             }
                           },
                           style: ElevatedButton.styleFrom(
