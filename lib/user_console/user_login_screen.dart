@@ -57,35 +57,33 @@ class UserLoginScreen extends StatelessWidget {
                             String email = emailController.text.trim();
                             String password = passwordController.text.trim();
 
-                            UserAuthenticationVM userAuthenticationVM =
-                                UserAuthenticationVM();
-                            await userAuthenticationVM
-                                .userLogin(email, password)
-                                .then(
+                            await value.userLogin(email, password).then(
                                   (result) => result.fold(
-                                    (l) =>
+                                    (l) {
+                                      if (value.user != null &&
+                                          value.userModel1 != null) {
                                         Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            UserHomeMasterScreen(
-                                          user: value.user!,
-                                          userModel: value.userModel1!,
-                                        ),
-                                      ),
-                                    ),
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserHomeMasterScreen(
+                                              user: value.user!,
+                                              userModel: value.userModel1!,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        UIHelper.showAlertDialog(
+                                            context,
+                                            'Login Failed',
+                                            'User or UserModel is null');
+                                      }
+                                    },
                                     (r) => UIHelper.showAlertDialog(
                                         context, 'Login Failed', r),
                                   ),
                                 );
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                        ),
                         child: value.loading
                             ? const SizedBox(
                                 width: 25,

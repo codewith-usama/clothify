@@ -92,10 +92,10 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                             image: AssetImage('assets/icon.png'),
                           ),
                         ),
-                  const SizedBox(width: 30),
+                  const SizedBox(width: 20),
                   Text(
                     widget.shopDetails['fullName'] ?? '',
-                    style: const TextStyle(fontSize: 28),
+                    style: const TextStyle(fontSize: 20),
                   ),
                   const SizedBox(width: 20),
                   IconButton(

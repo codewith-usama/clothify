@@ -44,8 +44,12 @@ class UserAuthenticationVM extends ChangeNotifier {
         userModel1 = userModel;
         user = userCredential.user;
         await usersCollection.doc(userCredential.user!.uid).set(userData);
+        setLoading(false);
+
         return left(true);
       } else {
+        setLoading(false);
+
         return right('Some error occured');
       }
     } on FirebaseAuthException catch (e) {
@@ -56,26 +60,40 @@ class UserAuthenticationVM extends ChangeNotifier {
 
   Future<Either<bool, String>> userLogin(String email, String password) async {
     try {
-      await firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
+      UserCredential userCredential =
+          await firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      UserCredential? userCredential;
-      String id = userCredential!.user!.uid;
+      if (userCredential.user != null) {
+        String id = userCredential.user!.uid;
 
-      DocumentSnapshot userData =
-          await FirebaseFirestore.instance.collection("users").doc(id).get();
+        DocumentSnapshot userData =
+            await FirebaseFirestore.instance.collection("users").doc(id).get();
 
-      Map<String, dynamic>? data = userData.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? data = userData.data() as Map<String, dynamic>?;
 
-      if (data != null) {
-        UserModel userModel = UserModel.fromMap(data);
-        userModel1 = userModel;
-        user = userCredential.user;
-        return left(true);
+        if (data != null) {
+          UserModel userModel = UserModel.fromMap(data);
+          userModel1 = userModel;
+          user = userCredential.user;
+          setLoading(false);
+
+          return left(true);
+        } else {
+          setLoading(false);
+
+          return right('Data is null');
+        }
       } else {
-        return right('Data in null');
+        setLoading(false);
+
+        return right('User is null');
       }
     } on FirebaseAuthException catch (e) {
+      setLoading(false);
+
       return right(e.message.toString());
     }
   }

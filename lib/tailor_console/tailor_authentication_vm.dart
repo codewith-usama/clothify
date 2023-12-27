@@ -44,8 +44,11 @@ class TailorAuthenticationVm extends ChangeNotifier {
         user = userCredential.user;
 
         await usersCollection.doc(userCredential.user!.uid).set(tailorData);
+        setLoading(false);
         return left(true);
       } else {
+        setLoading(false);
+
         return right('Some error occured');
       }
     } on FirebaseAuthException catch (e) {
@@ -63,20 +66,28 @@ class TailorAuthenticationVm extends ChangeNotifier {
         email: email,
         password: password,
       );
-      String id = userCredential.user!.uid;
+      if (userCredential.user != null) {
+        String id = userCredential.user!.uid;
 
-      DocumentSnapshot tailorData =
-          await FirebaseFirestore.instance.collection("tailors").doc(id).get();
+        DocumentSnapshot tailorData = await FirebaseFirestore.instance
+            .collection("tailors")
+            .doc(id)
+            .get();
 
-      Map<String, dynamic>? data = tailorData.data() as Map<String, dynamic>?;
+        Map<String, dynamic>? data = tailorData.data() as Map<String, dynamic>?;
 
-      if (data != null) {
-        TailorModel tailorModel = TailorModel.fromMap(data);
-        tailorModel1 = tailorModel;
-        user = userCredential.user;
-        return left(true);
+        if (data != null) {
+          TailorModel tailorModel = TailorModel.fromMap(data);
+          tailorModel1 = tailorModel;
+          user = userCredential.user;
+          setLoading(false);
+          return left(true);
+        } else {
+          setLoading(false);
+          return right('Data in null');
+        }
       } else {
-        return right('Data in null');
+        return right('User is null');
       }
     } on FirebaseAuthException catch (e) {
       setLoading(false);

@@ -35,7 +35,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   void fetchParticipantDetails() async {
     userModel = await fetchUserDetails(widget.chatRoomModel.userId);
     tailorModel = await fetchTailorDetails(widget.chatRoomModel.tailorId);
-    if(mounted) {
+    if (mounted) {
       setState(() {});
     }
   }
@@ -102,15 +102,25 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         ),
         title: Row(
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(
-                userModel?.profilePic ??
-                    tailorModel?.profilePic ??
-                    'https://th.bing.com/th/id/R.72380963a35b3fba67398022db5ae99d?rik=ga0xsfijaETFdQ&riu=http%3a%2f%2f1.bp.blogspot.com%2f-NP0zmaopjRE%2fUhhnlfaNsrI%2fAAAAAAAAEuE%2fZ5HQX6Jhqik%2fs1600%2fa%2b(9).jpg&ehk=AGheMSErLhbTXsly541CsCFJA95DVaC6Hd3vxS6KKFU%3d&risl=&pid=ImgRaw&r=0',
+            if (widget.firebaseUser.uid == userModel?.id)
+              CircleAvatar(
+                backgroundImage: NetworkImage(
+                  tailorModel?.profilePic ??
+                      'https://th.bing.com/th/id/R.72380963a35b3fba67398022db5ae99d?rik=ga0xsfijaETFdQ&riu=http%3a%2f%2f1.bp.blogspot.com%2f-NP0zmaopjRE%2fUhhnlfaNsrI%2fAAAAAAAAEuE%2fZ5HQX6Jhqik%2fs1600%2fa%2b(9).jpg&ehk=AGheMSErLhbTXsly541CsCFJA95DVaC6Hd3vxS6KKFU%3d&risl=&pid=ImgRaw&r=0',
+                ),
               ),
-            ),
+            if (widget.firebaseUser.uid == tailorModel?.id)
+              CircleAvatar(
+                backgroundImage: NetworkImage(
+                  userModel?.profilePic ??
+                      'https://th.bing.com/th/id/R.72380963a35b3fba67398022db5ae99d?rik=ga0xsfijaETFdQ&riu=http%3a%2f%2f1.bp.blogspot.com%2f-NP0zmaopjRE%2fUhhnlfaNsrI%2fAAAAAAAAEuE%2fZ5HQX6Jhqik%2fs1600%2fa%2b(9).jpg&ehk=AGheMSErLhbTXsly541CsCFJA95DVaC6Hd3vxS6KKFU%3d&risl=&pid=ImgRaw&r=0',
+                ),
+              ),
             const SizedBox(width: 10),
-            Text(userModel?.userFullName ?? tailorModel?.fullName ?? 'Chat'),
+            if (widget.firebaseUser.uid == tailorModel?.id)
+              Text(userModel?.userFullName ?? ''),
+            if (widget.firebaseUser.uid == userModel?.id)
+              Text(tailorModel?.fullName ?? ''),
           ],
         ),
       ),
