@@ -75,22 +75,29 @@ class _TailorMessagesTileState extends State<TailorMessagesTile> {
                                 );
                               },
                               leading: CircleAvatar(
+                                radius: 30,
                                 backgroundColor: Colors.grey.shade300,
                                 backgroundImage:
                                     NetworkImage(userData.data!.profilePic!),
                               ),
-                              title: Text(targetUser.userFullName.toString()),
-                              subtitle: (chatRoomModel.lastMessage
-                                      .toString()
-                                      .isEmpty)
-                                  ? Text(
-                                      "Say Hi to your new Friend",
-                                      style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                    )
-                                  : Text(chatRoomModel.lastMessage.toString()),
+                              title: Text(
+                                targetUser.userFullName.toString(),
+                                style: const TextStyle(fontSize: 22),
+                              ),
+                              subtitle:
+                                  (chatRoomModel.lastMessage.toString().isEmpty)
+                                      ? Text(
+                                          "Say Hi to your new Friend",
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                        )
+                                      : Text(
+                                          chatRoomModel.lastMessage.toString(),
+                                          style: const TextStyle(fontSize: 18),
+                                        ),
                             );
                           } else {
                             return const SizedBox.shrink();

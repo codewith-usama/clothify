@@ -91,7 +91,7 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                   const SizedBox(width: 10),
                   widget.shopDetails['profilePic'] != null
                       ? CircleAvatar(
-                          radius: 50,
+                          radius: 60,
                           backgroundImage:
                               NetworkImage(widget.shopDetails['profilePic']),
                         )
@@ -104,7 +104,9 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                   const Text(
                     'Say Hi',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 22,
+                      color: Colors.black54,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                   const SizedBox(width: 20),
@@ -132,46 +134,89 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
               ),
 
               const SizedBox(height: 10),
-              const SizedBox(width: 20),
               Text(
                 widget.shopDetails['fullName'] ?? '',
                 style: const TextStyle(fontSize: 20),
               ),
-              // Description
-              const Text('Description',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+
+              const Text(
+                'Description',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+
               Text(
                 widget.shopDetails['description'] ?? '',
-                style: const TextStyle(fontSize: 15),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
               const SizedBox(height: 10),
               // Phone Number
-              const Text('Phone Number',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text(
+                'Phone Number',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(
                 widget.shopDetails['phoneNumber'] ?? '',
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
               const SizedBox(height: 10),
               // Area
-              const Text('Area',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text(
+                'Area',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(
                 widget.shopDetails['area'] ?? '',
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
               const SizedBox(height: 10),
               // Available Timing
-              const Text('Available Timing',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text(
+                'Available Timing',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(
                 widget.shopDetails['availableTimings'] ?? '',
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
               const SizedBox(height: 10),
               // Recent Orders
-              const Text('Recent Orders',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text(
+                'Recent Orders',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               CarouselSlider(
                 items: [
                   for (var order in recentOrders)
