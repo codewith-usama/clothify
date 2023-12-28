@@ -26,7 +26,7 @@ class _UserMessageTileState extends State<UserMessageTile> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         title: Text(
-          'ChitChatHub',
+          'ChitChat',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
           ),
@@ -57,8 +57,8 @@ class _UserMessageTileState extends State<UserMessageTile> {
                     participantsKeys.remove(widget.user.uid);
 
                     return FutureBuilder(
-                      future:
-                          FirebaseHelper.getTailorModelById(participantsKeys[0]),
+                      future: FirebaseHelper.getTailorModelById(
+                          participantsKeys[0]),
                       builder: (BuildContext context, tailorData) {
                         if (tailorData.connectionState ==
                             ConnectionState.done) {

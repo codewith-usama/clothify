@@ -26,7 +26,7 @@ class _TailorMessagesTileState extends State<TailorMessagesTile> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
         title: Text(
-          'ChitChatHub',
+          'ChitChat',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
           ),

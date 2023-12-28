@@ -120,7 +120,7 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                         ),
                   const SizedBox(width: 20),
                   const Text(
-                    'Talk to Tailor',
+                    'Say Hi',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -160,7 +160,7 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               Text(
                 widget.shopDetails['description'] ?? '',
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 15),
               ),
               const SizedBox(height: 10),
               // Phone Number
