@@ -89,10 +89,10 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                   const SizedBox(width: 10),
                   widget.shopDetails['profilePic'] != null
                       ? CircleAvatar(
-                          radius: 50,
-                          backgroundImage:
-                              NetworkImage(widget.shopDetails['profilePic']),
-                        )
+                        radius: 50,
+                        backgroundImage:
+                            NetworkImage(widget.shopDetails['profilePic']),
+                      )
                       : const CircleAvatar(
                           child: Image(
                             image: AssetImage('assets/icon.png'),

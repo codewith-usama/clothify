@@ -30,7 +30,6 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
     final List<Widget> pages = [
       const Center(child: Text('Page 1')),
       const Center(child: Text('Page 2')),
-      const Center(child: Text('Page 3')),
       TailorMessagesTile(user: widget.user),
       const TailorSettingScreen(),
     ];
@@ -61,6 +60,21 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        // InkWell(
+                        //   onTap: () => value.onPageUpdated(0),
+                        //   child: Column(
+                        //     mainAxisSize: MainAxisSize.min,
+                        //     mainAxisAlignment: MainAxisAlignment.end,
+                        //     children: [
+                        //       Icon(
+                        //         value.selectedPageIndex == 0
+                        //             ? Icons.explore
+                        //             : Icons.explore_outlined,
+                        //       ),
+                        //       const Text('Explore'),
+                        //     ],
+                        //   ),
+                        // ),
                         InkWell(
                           onTap: () => value.onPageUpdated(0),
                           child: Column(
@@ -69,10 +83,10 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
                             children: [
                               Icon(
                                 value.selectedPageIndex == 0
-                                    ? Icons.explore
-                                    : Icons.explore_outlined,
+                                    ? Icons.add_box
+                                    : Icons.add_box_outlined,
                               ),
-                              const Text('Explore'),
+                              const Text('Order'),
                             ],
                           ),
                         ),
@@ -84,10 +98,10 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
                             children: [
                               Icon(
                                 value.selectedPageIndex == 1
-                                    ? Icons.add_box
-                                    : Icons.add_box_outlined,
+                                    ? Icons.scale
+                                    : Icons.scale_outlined,
                               ),
-                              const Text('Order'),
+                              const Text('Size'),
                             ],
                           ),
                         ),
@@ -99,10 +113,10 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
                             children: [
                               Icon(
                                 value.selectedPageIndex == 2
-                                    ? Icons.scale
-                                    : Icons.scale_outlined,
+                                    ? Icons.message
+                                    : Icons.message_outlined,
                               ),
-                              const Text('Size'),
+                              const Text('Message'),
                             ],
                           ),
                         ),
@@ -114,21 +128,6 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
                             children: [
                               Icon(
                                 value.selectedPageIndex == 3
-                                    ? Icons.message
-                                    : Icons.message_outlined,
-                              ),
-                              const Text('Message'),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () => value.onPageUpdated(4),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Icon(
-                                value.selectedPageIndex == 4
                                     ? Icons.settings
                                     : Icons.settings_outlined,
                               ),

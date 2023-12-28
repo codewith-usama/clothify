@@ -4,29 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:fyp/helper/ui_helper.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
 import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class TailorRegistrationScreen extends StatefulWidget {
-  const TailorRegistrationScreen({super.key});
+class TailorRegistrationScreen extends StatelessWidget {
+  final double height;
+  final double width;
+  const TailorRegistrationScreen({
+    super.key,
+    required this.height,
+    required this.width,
+  });
 
-  @override
-  State<TailorRegistrationScreen> createState() =>
-      _TailorRegistrationScreenState();
-}
-
-class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    // final values = <bool?>[
-    //   null,
-    //   false,
-    //   true,
-    //   false,
-    //   true,
-    //   false,
-    //   null
-    // ]; // TextEditingControllers
+    // TextEditingControllers
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
     final TextEditingController fullNameController = TextEditingController();
@@ -45,6 +38,7 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
     final TextEditingController phoneNumberController = TextEditingController();
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 166, 206, 226),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -54,11 +48,25 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
               child: Builder(
                 builder: (context) => SingleChildScrollView(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(height: height * 0.04),
+                      Text(
+                        'GET STARTED',
+                        style: GoogleFonts.mali(
+                          textStyle: TextStyle(
+                            color: Colors.white,
+                            letterSpacing: 2,
+                            fontSize: width * 0.12,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: height * 0.03),
                       TextFormField(
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter Email"),
                           hintText: "Enter Email",
@@ -72,6 +80,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                         controller: passwordController,
                         obscureText: true,
                         keyboardType: TextInputType.visiblePassword,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter Password"),
                           hintText: "Enter Password",
@@ -83,6 +93,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: fullNameController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         keyboardType: TextInputType.name,
                         decoration: const InputDecoration(
                           label: Text("Enter Full Name"),
@@ -95,6 +107,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: shopNameController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter Shop Name"),
                           hintText: "Enter Shop Name",
@@ -107,6 +121,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       TextFormField(
                         controller: shopNumberController,
                         keyboardType: TextInputType.number,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter Shop Number"),
                           hintText: "Enter Shop Number",
@@ -118,6 +134,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: descController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: const InputDecoration(
@@ -131,6 +149,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: areaController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter Area"),
                           hintText: "Enter Area",
@@ -142,6 +162,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: cityController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter City"),
                           hintText: "Enter City",
@@ -153,6 +175,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: zipCodeController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           label: Text("Enter Zip Code"),
@@ -165,6 +189,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: availableTimingsController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter Available Timings"),
                           hintText: "Enter Available Days of the Week",
@@ -174,18 +200,10 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                             : 'Enter Available Timings',
                       ),
                       const SizedBox(height: 20),
-                      // WeekdaySelector(
-                      //   onChanged: (int v) {
-                      //     setState(() {
-                      //       values[v % 7] = !values[v % 7]!;
-                      //     });
-                      //   },
-                      //   selectedFillColor: Colors.amber,
-                      //   selectedColor: Colors.black,
-                      //   values: values,
-                      // ),
                       TextFormField(
                         controller: typesOfClothsController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         decoration: const InputDecoration(
                           label: Text("Enter Types of Cloths"),
                           hintText:
@@ -198,6 +216,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: priceForEachTimeController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         keyboardType: TextInputType.number,
                         decoration: const InputDecoration(
                           label: Text("Enter Price for Each Time"),
@@ -210,6 +230,8 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                       const SizedBox(height: 20),
                       TextFormField(
                         controller: phoneNumberController,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 18),
                         keyboardType: TextInputType.phone,
                         decoration: const InputDecoration(
                           label: Text("Enter Phone Number"),
@@ -254,8 +276,7 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                                 };
 
                                 await value
-                                    .tailorRegistration(
-                                        tailorsRegistrationData)
+                                    .tailorRegistration(tailorsRegistrationData)
                                     .then(
                                       (result) => result.fold(
                                         (l) => Navigator.of(context)
@@ -292,6 +313,7 @@ class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
                           ),
                         ),
                       ),
+                      SizedBox(height: height * 0.04),
                     ],
                   ),
                 ),

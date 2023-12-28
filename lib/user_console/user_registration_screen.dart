@@ -1,13 +1,18 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:fyp/helper/ui_helper.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
 import 'package:fyp/user_console/user_home_master_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class UserRegistrationScreen extends StatelessWidget {
-  const UserRegistrationScreen({super.key});
+  final double height;
+  final double width;
+  const UserRegistrationScreen({
+    super.key,
+    required this.height,
+    required this.width,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +27,7 @@ class UserRegistrationScreen extends StatelessWidget {
     final TextEditingController zipCodeController = TextEditingController();
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 166, 206, 226),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -30,11 +36,24 @@ class UserRegistrationScreen extends StatelessWidget {
               key: formKey,
               child: SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(height: height * 0.04),
+                    Text(
+                      'GET STARTED',
+                      style: GoogleFonts.mali(
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          letterSpacing: 2,
+                          fontSize: width * 0.12,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: height * 0.03),
                     TextFormField(
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                       decoration: const InputDecoration(
                         label: Text("Enter Email"),
                         hintText: "Enter Email",
@@ -46,6 +65,7 @@ class UserRegistrationScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: passwordController,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                       obscureText: true,
                       keyboardType: TextInputType.visiblePassword,
                       decoration: const InputDecoration(
@@ -60,6 +80,7 @@ class UserRegistrationScreen extends StatelessWidget {
                     TextFormField(
                       controller: fullNameController,
                       keyboardType: TextInputType.name,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                       decoration: const InputDecoration(
                         label: Text("Enter Full Name"),
                         hintText: "Enter Full Name",
@@ -72,6 +93,7 @@ class UserRegistrationScreen extends StatelessWidget {
                     TextFormField(
                       controller: phoneNumberController,
                       keyboardType: TextInputType.phone,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                       decoration: const InputDecoration(
                         label: Text("Enter Phone Number"),
                         hintText: "Enter Phone Number",
@@ -84,6 +106,7 @@ class UserRegistrationScreen extends StatelessWidget {
                     TextFormField(
                       controller: areaController,
                       keyboardType: TextInputType.text,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                       decoration: const InputDecoration(
                         label: Text("Enter Area"),
                         hintText: "Enter Area",
@@ -95,6 +118,7 @@ class UserRegistrationScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: cityController,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                       keyboardType: TextInputType.text,
                       decoration: const InputDecoration(
                         label: Text("Enter City"),
@@ -108,6 +132,7 @@ class UserRegistrationScreen extends StatelessWidget {
                     TextFormField(
                       controller: zipCodeController,
                       keyboardType: TextInputType.number,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
                       decoration: const InputDecoration(
                         label: Text("Enter Zipcode"),
                         hintText: "Enter Zipcode",
@@ -185,6 +210,7 @@ class UserRegistrationScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    SizedBox(height: height * 0.04),
                   ],
                 ),
               ),
