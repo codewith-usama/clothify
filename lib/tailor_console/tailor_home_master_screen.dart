@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:fyp/tailor_console/tailor_master_view_model.dart';
 import 'package:fyp/tailor_console/tailor_messages_tile.dart';
 import 'package:fyp/tailor_console/tailor_model.dart';
+import 'package:fyp/tailor_console/tailor_order_screen.dart';
 import 'package:fyp/tailor_console/tailor_setting_screen.dart';
+import 'package:fyp/tailor_console/tailors_measurement_page.dart';
 import 'package:provider/provider.dart';
 
 class TailorHomeMasterScreen extends StatefulWidget {
@@ -28,8 +30,8 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      const Center(child: Text('Page 1')),
-      const Center(child: Text('Page 2')),
+      TailorOrderScreen(),
+      const TailorsMeasurementPage(),
       TailorMessagesTile(user: widget.user),
       const TailorSettingScreen(),
     ];

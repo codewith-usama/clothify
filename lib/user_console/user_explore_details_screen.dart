@@ -28,6 +28,26 @@ class UserExploreDetailsScreen extends StatefulWidget {
       _UserExploreDetailsScreenState();
 }
 
+void _showFullScreenImage(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(imageUrl),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
   @override
   Widget build(BuildContext context) {
@@ -89,19 +109,21 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                   const SizedBox(width: 10),
                   widget.shopDetails['profilePic'] != null
                       ? CircleAvatar(
-                        radius: 50,
-                        backgroundImage:
-                            NetworkImage(widget.shopDetails['profilePic']),
-                      )
+                          radius: 50,
+                          backgroundImage:
+                              NetworkImage(widget.shopDetails['profilePic']),
+                        )
                       : const CircleAvatar(
                           child: Image(
                             image: AssetImage('assets/icon.png'),
                           ),
                         ),
                   const SizedBox(width: 20),
-                  Text(
-                    widget.shopDetails['fullName'] ?? '',
-                    style: const TextStyle(fontSize: 20),
+                  const Text(
+                    'Talk to Tailor',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
                   const SizedBox(width: 20),
                   IconButton(
@@ -128,6 +150,11 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
               ),
 
               const SizedBox(height: 10),
+              const SizedBox(width: 20),
+              Text(
+                widget.shopDetails['fullName'] ?? '',
+                style: const TextStyle(fontSize: 20),
+              ),
               // Description
               const Text('Description',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
@@ -164,17 +191,20 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
               const Text('Recent Orders',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               for (var order in recentOrders)
-                SizedBox(
-                  height: 200,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Image.network(
-                      order.toString(),
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Image(
-                          image: AssetImage('assets/icon.png'),
-                        );
-                      },
+                GestureDetector(
+                  onTap: () => _showFullScreenImage(context, order.toString()),
+                  child: SizedBox(
+                    height: 200,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Image.network(
+                        order.toString(),
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Image(
+                            image: AssetImage('assets/icon.png'),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),

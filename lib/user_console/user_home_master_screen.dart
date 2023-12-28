@@ -4,6 +4,7 @@ import 'package:fyp/user_console/user_explore_screen.dart';
 import 'package:fyp/user_console/user_master_view_model.dart';
 import 'package:fyp/user_console/user_message_tile.dart';
 import 'package:fyp/user_console/user_model.dart';
+import 'package:fyp/user_console/user_order_screen.dart';
 import 'package:fyp/user_console/users_setting_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -28,8 +29,10 @@ class _UserHomeMasterScreenState extends State<UserHomeMasterScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      const UserExploreScreen(),
-      const Center(child: Text('Two')),
+      UserExploreScreen(
+        userModel: widget.userModel,
+      ),
+      UserOrderScreen(),
       UserMessageTile(user: widget.user),
       const UsersSettingScreen(),
     ];
