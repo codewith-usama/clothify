@@ -6,9 +6,32 @@ class UserOrderScreen extends StatelessWidget {
       'status': 'Processing',
       'date': 'Today',
       'id': '4544882266',
-      'image': 'assets/icon.png', // Replace with actual image path
+      'image': 'assets/profile1.jpg',
     },
-    // ... other orders
+    {
+      'status': 'Working',
+      'date': 'Yesterday',
+      'id': '4544231066',
+      'image': 'assets/profile2.jpg',
+    },
+    {
+      'status': 'Completed',
+      'date': 'Yesterday',
+      'id': '4004112266',
+      'image': 'assets/profile3.jpg',
+    },
+    {
+      'status': 'Processing',
+      'date': 'Today',
+      'id': '4543288966',
+      'image': 'assets/profile4.jpg',
+    },
+    {
+      'status': 'Processing',
+      'date': 'Today',
+      'id': '4521889866',
+      'image': 'assets/profile5.jpg',
+    },
   ];
 
   UserOrderScreen({super.key});
@@ -26,8 +49,12 @@ class UserOrderScreen extends StatelessWidget {
           return Card(
             margin: const EdgeInsets.all(8),
             child: ListTile(
-              leading: Image.asset(
-                  order['image']), // Replace with a network image if necessary
+              leading: CircleAvatar(
+                radius: 30,
+                backgroundImage: AssetImage(
+                  order['image'],
+                ),
+              ),
               title: Text(order['status']),
               subtitle: Text('Order ID: ${order['id']}'),
               trailing: Text(order['date']),

@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:fyp/data/model/chat_room_model.dart';
 import 'package:fyp/data/chat_room_page.dart';
 import 'package:fyp/main.dart';
 import 'package:fyp/tailor_console/tailor_model.dart';
+import 'package:fyp/user_console/order_details_screen.dart';
 import 'package:fyp/user_console/user_model.dart';
 
 class UserExploreDetailsScreen extends StatefulWidget {
@@ -26,26 +28,6 @@ class UserExploreDetailsScreen extends StatefulWidget {
   @override
   State<UserExploreDetailsScreen> createState() =>
       _UserExploreDetailsScreenState();
-}
-
-void _showFullScreenImage(BuildContext context, String imageUrl) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(imageUrl),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-      );
-    },
-  );
 }
 
 class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
@@ -190,24 +172,50 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
               // Recent Orders
               const Text('Recent Orders',
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-              for (var order in recentOrders)
-                GestureDetector(
-                  onTap: () => _showFullScreenImage(context, order.toString()),
-                  child: SizedBox(
-                    height: 200,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Image.network(
-                        order.toString(),
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Image(
-                            image: AssetImage('assets/icon.png'),
-                          );
-                        },
+              CarouselSlider(
+                items: [
+                  for (var order in recentOrders)
+                    Container(
+                      margin: const EdgeInsets.all(6.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        image: DecorationImage(
+                          image: NetworkImage(order.toString()),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
-                  ),
+                ],
+                options: CarouselOptions(
+                  height: 180.0,
+                  enlargeCenterPage: true,
+                  autoPlay: true,
+                  aspectRatio: 16 / 9,
+                  autoPlayCurve: Curves.fastOutSlowIn,
+                  enableInfiniteScroll: true,
+                  autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                  viewportFraction: 0.9,
                 ),
+              ),
+              const SizedBox(height: 10),
+
+              ElevatedButton(
+                onPressed: () {
+                  // Code to navigate to the order details screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const OrderDetailsScreen(), // Replace with your actual order details screen widget
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(
+                      double.infinity, 50), // Full width and 50px height
+                ),
+                child: const Text('Order Place'),
+              ),
             ],
           ),
         ),

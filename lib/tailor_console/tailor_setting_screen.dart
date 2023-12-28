@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/initial/select_screen.dart';
+import 'package:fyp/tailor_console/tailor_change_password_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
 class TailorSettingScreen extends StatefulWidget {
@@ -25,8 +26,7 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-  final TextEditingController _passwordController = TextEditingController();
-  String _errorMessage = '';
+  String errorMessage = '';
 
   @override
   void initState() {
@@ -114,17 +114,6 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
     });
   }
 
-  Future<void> changePassword() async {
-    try {
-      await firebaseAuth.currentUser!.updatePassword(_passwordController.text);
-      Navigator.of(context).pop();
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _errorMessage = e.message!;
-      });
-    }
-  }
-
   Future<void> selectRecentOrders() async {
     final List<XFile>? pickedFiles = await picker.pickMultiImage();
     if (pickedFiles != null && pickedFiles.isNotEmpty) {
@@ -205,19 +194,20 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
                 const SizedBox(height: 10),
                 Text(email ?? 'Email', style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 20),
-                if (_errorMessage.isNotEmpty)
-                  Text(_errorMessage,
-                      style: const TextStyle(color: Colors.red)),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                      labelText: 'New Password', border: OutlineInputBorder()),
-                ),
+                if (errorMessage.isNotEmpty)
+                  Text(errorMessage, style: const TextStyle(color: Colors.red)),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                    onPressed: changePassword,
-                    child: const Text('Change Password')),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const TailorChangePasswordScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('Change Password'),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                     onPressed: selectRecentOrders,
@@ -238,12 +228,15 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
                   },
                 ),
                 const SizedBox(height: 50),
-                ElevatedButton(
-                  onPressed: () async {
-                    await firebaseAuth.signOut();
-                    pushRoute();
-                  },
-                  child: const Text('Logout'),
+                SizedBox(
+                  width: double.maxFinite,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await firebaseAuth.signOut();
+                      pushRoute();
+                    },
+                    child: const Text('Logout'),
+                  ),
                 ),
               ],
             ),
