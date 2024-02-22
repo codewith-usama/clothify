@@ -76,6 +76,67 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
       return chatRoomModel;
     }
 
+    void _placeOrder() async {
+      String documentId = '${widget.userModel.id}_${widget.tailorModel.id}';
+
+      // Check if the document already exists
+      bool documentExists = await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(documentId)
+          .get()
+          .then((doc) => doc.exists);
+
+      if (documentExists) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Confirmation'),
+            content: const Text(
+                'You already have measurements recorded for this tailor. Do you want to rewrite them?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the dialog
+                  // Save the order
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return OrderDetailsScreen(
+                          userId: widget.userModel.id!,
+                          tailorId: widget.tailorModel.id!,
+                        );
+                      },
+                    ),
+                  );
+                },
+                child: const Text('Yes'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the dialog
+                },
+                child: const Text('No'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        // If document does not exist, save the order directly
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return OrderDetailsScreen(
+                userId: widget.userModel.id!,
+                tailorId: widget.tailorModel.id!,
+              );
+            },
+          ),
+        );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.shopDetails['shopName'] ?? 'Shop Details'),
@@ -246,18 +307,10 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
 
               ElevatedButton(
                 onPressed: () {
-                  // Code to navigate to the order details screen
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const OrderDetailsScreen(), // Replace with your actual order details screen widget
-                    ),
-                  );
+                  _placeOrder();
                 },
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(
-                      double.infinity, 50), // Full width and 50px height
+                  minimumSize: const Size(double.infinity, 50),
                 ),
                 child: const Text('Order Place'),
               ),

@@ -1,9 +1,16 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
-  const OrderDetailsScreen({super.key});
+  final String userId;
+  final String tailorId;
+  const OrderDetailsScreen({
+    super.key,
+    required this.userId,
+    required this.tailorId,
+  });
 
   @override
   _OrderDetailsScreenState createState() => _OrderDetailsScreenState();
@@ -27,24 +34,64 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     'Pants',
     'Dress'
   ];
-  final double _fixedPrice = 1100; // Fixed price
+  final double _fixedPrice = 1100;
 
   void _placeOrder() {
     if (_formKey.currentState!.validate()) {
-      // Process your order here, for example, send data to a backend or show a confirmation dialog
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Order Confirmation'),
-          content: const Text('Your order has been placed!'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      Map<String, dynamic> orderData = {
+        'userId': widget.userId,
+        'tailorId': widget.tailorId,
+        'bust': _measurementsControllers['Bust']!.text,
+        'waist': _measurementsControllers['Waist']!.text,
+        'hip': _measurementsControllers['Hip']!.text,
+        'flare': _measurementsControllers['Flare']!.text,
+        'strapToHem': _measurementsControllers['StrapToHem']!.text,
+        'waistToHem': _measurementsControllers['WaistToHem']!.text,
+        'specialDescription': _specialDescriptionController.text,
+        'status': false,
+      };
+
+      String documentId = '${widget.userId}_${widget.tailorId}';
+
+      FirebaseFirestore.instance
+          .collection('orders')
+          .doc(documentId)
+          .set(orderData)
+          .then((_) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Order Confirmation'),
+            content: const Text('Your order has been placed!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }).catchError((error) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to place order: $error'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      });
     }
   }
 
