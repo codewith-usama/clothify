@@ -76,7 +76,7 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
       return chatRoomModel;
     }
 
-    void _placeOrder() async {
+    void placeOrder() async {
       String documentId = '${widget.userModel.id}_${widget.tailorModel.id}';
 
       // Check if the document already exists
@@ -307,7 +307,7 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
 
               ElevatedButton(
                 onPressed: () {
-                  _placeOrder();
+                  placeOrder();
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),

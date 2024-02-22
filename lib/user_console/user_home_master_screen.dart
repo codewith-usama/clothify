@@ -32,7 +32,7 @@ class _UserHomeMasterScreenState extends State<UserHomeMasterScreen> {
       UserExploreScreen(
         userModel: widget.userModel,
       ),
-      UserOrderScreen(),
+      const UserOrderScreen(),
       UserMessageTile(user: widget.user),
       const UsersSettingScreen(),
     ];

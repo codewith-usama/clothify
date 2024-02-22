@@ -1,71 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserOrderScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> orders = [
-    {
-      'status': 'Processing',
-      'date': 'Today',
-      'id': '4544882266',
-      'image': 'assets/profile1.jpg',
-    },
-    {
-      'status': 'Working',
-      'date': 'Yesterday',
-      'id': '4544231066',
-      'image': 'assets/profile2.jpg',
-    },
-    {
-      'status': 'Completed',
-      'date': 'Yesterday',
-      'id': '4004112266',
-      'image': 'assets/profile3.jpg',
-    },
-    {
-      'status': 'Processing',
-      'date': 'Today',
-      'id': '4543288966',
-      'image': 'assets/profile4.jpg',
-    },
-    {
-      'status': 'Processing',
-      'date': 'Today',
-      'id': '4521889866',
-      'image': 'assets/profile5.jpg',
-    },
-  ];
-
-  UserOrderScreen({super.key});
+  const UserOrderScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Orders'),
       ),
-      body: ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          final order = orders[index];
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-              leading: CircleAvatar(
-                radius: 30,
-                backgroundImage: AssetImage(
-                  order['image'],
-                ),
-              ),
-              title: Text(order['status']),
-              subtitle: Text('Order ID: ${order['id']}'),
-              trailing: Text(order['date']),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => OrderDetailScreen(order: order),
-                ),
-              ),
-            ),
-          );
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('orders')
+            .where('userId', isEqualTo: currentUser?.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            final orders = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (context, index) {
+                final order = orders[index].data() as Map<String, dynamic>;
+                final status =
+                    order['status'] == true ? 'Completed' : 'Processing';
+                final tailorId = order['tailorId'];
+                return FutureBuilder<DocumentSnapshot>(
+                  future: FirebaseFirestore.instance
+                      .collection('tailors')
+                      .doc(tailorId)
+                      .get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(
+                        height: 10,
+                        width: 10,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      final tailorData =
+                          snapshot.data!.data() as Map<String, dynamic>;
+                      final tailorName = tailorData['fullName'];
+                      final tailorImage = tailorData['profilePic'];
+                      return Card(
+                        margin: const EdgeInsets.all(8),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(tailorImage),
+                          ),
+                          title: Text(status),
+                          subtitle: Text('Tailor: $tailorName'),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  OrderDetailScreen(order: order),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                );
+              },
+            );
+          }
         },
       ),
     );
@@ -75,7 +88,7 @@ class UserOrderScreen extends StatelessWidget {
 class OrderDetailScreen extends StatelessWidget {
   final Map<String, dynamic> order;
 
-  const OrderDetailScreen({super.key, required this.order});
+  const OrderDetailScreen({Key? key, required this.order}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +98,6 @@ class OrderDetailScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Placeholder for order tracking widget
           Expanded(
             child: ListView(
               children: const [
@@ -96,7 +108,6 @@ class OrderDetailScreen extends StatelessWidget {
               ],
             ),
           ),
-          // Placeholder for billing information
           const Card(
             margin: EdgeInsets.all(8),
             child: ListTile(
@@ -115,7 +126,8 @@ class TrackingStep extends StatelessWidget {
   final String title;
   final String time;
 
-  const TrackingStep({super.key, required this.title, required this.time});
+  const TrackingStep({Key? key, required this.title, required this.time})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

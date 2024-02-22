@@ -19,6 +19,40 @@ class OrderDetailsScreen extends StatefulWidget {
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _selectedClothType;
+
+  @override
+  void initState() {
+    super.initState();
+    // Call a method to fetch user data from Firestore
+    _fetchUserData();
+  }
+
+  void _fetchUserData() async {
+    try {
+      String documentId = '${widget.userId}_${widget.tailorId}';
+      // Fetch the user data from Firestore
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('orders')
+          .doc(documentId)
+          .get();
+
+      if (snapshot.exists) {
+        // If data exists, update the TextEditingController with fetched data
+        Map<String, dynamic> data = snapshot.data()!;
+        _measurementsControllers['Bust']!.text = data['bust'];
+        _measurementsControllers['Waist']!.text = data['waist'];
+        _measurementsControllers['Hip']!.text = data['hip'];
+        _measurementsControllers['Flare']!.text = data['flare'];
+        _measurementsControllers['StrapToHem']!.text = data['strapToHem'];
+        _measurementsControllers['WaistToHem']!.text = data['waistToHem'];
+        _specialDescriptionController.text = data['specialDescription'];
+      }
+    } catch (error) {
+      // Handle error if necessary
+    }
+  }
+
   final Map<String, TextEditingController> _measurementsControllers = {
     'Bust': TextEditingController(),
     'Waist': TextEditingController(),
