@@ -30,7 +30,7 @@ class _TailorHomeMasterScreenState extends State<TailorHomeMasterScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      TailorOrderScreen(),
+      const TailorOrderScreen(),
       const TailorsMeasurementPage(),
       TailorMessagesTile(user: widget.user),
       const TailorSettingScreen(),

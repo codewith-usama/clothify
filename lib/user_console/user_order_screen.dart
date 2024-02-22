@@ -32,8 +32,7 @@ class UserOrderScreen extends StatelessWidget {
               itemCount: orders.length,
               itemBuilder: (context, index) {
                 final order = orders[index].data() as Map<String, dynamic>;
-                final status =
-                    order['status'] == true ? 'Completed' : 'Processing';
+
                 final tailorId = order['tailorId'];
                 return FutureBuilder<DocumentSnapshot>(
                   future: FirebaseFirestore.instance
@@ -56,14 +55,34 @@ class UserOrderScreen extends StatelessWidget {
                           snapshot.data!.data() as Map<String, dynamic>;
                       final tailorName = tailorData['fullName'];
                       final tailorImage = tailorData['profilePic'];
+                      final status = order['status'];
                       return Card(
                         margin: const EdgeInsets.all(8),
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(tailorImage),
                           ),
-                          title: Text(status),
-                          subtitle: Text('Tailor: $tailorName'),
+                          title: const Text('Tailor'),
+                          subtitle: Text('$tailorName'),
+                          trailing: SizedBox(
+                            width: 100,
+                            child: Card(
+                              color: status == "Pending"
+                                  ? Colors.brown
+                                  : status == "Completed"
+                                      ? Colors.green
+                                      : Colors.blue,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                  child: Text(
+                                    status,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(

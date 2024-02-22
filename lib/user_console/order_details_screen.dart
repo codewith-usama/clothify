@@ -82,7 +82,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         'strapToHem': _measurementsControllers['StrapToHem']!.text,
         'waistToHem': _measurementsControllers['WaistToHem']!.text,
         'specialDescription': _specialDescriptionController.text,
-        'status': false,
+        'status': 'Pending',
       };
 
       String documentId = '${widget.userId}_${widget.tailorId}';
