@@ -137,6 +137,28 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
       }
     }
 
+    int finalTotalRating = 0;
+
+    Future<double> _fetchAverageRating(String tailorId) async {
+      final QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('ratings')
+              .where('tailorId', isEqualTo: tailorId)
+              .get();
+
+      double totalRating = 0;
+      int totalRatings = querySnapshot.docs.length;
+      finalTotalRating = totalRatings;
+
+      querySnapshot.docs.forEach((doc) {
+        totalRating += doc['rating'];
+      });
+
+      double avgRating = totalRatings > 0 ? totalRating / totalRatings : 0;
+
+      return avgRating;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.shopDetails['shopName'] ?? 'Shop Details'),
@@ -190,6 +212,26 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
                       Icons.message_outlined,
                       size: 30,
                     ),
+                  ),
+                  FutureBuilder<double>(
+                    future: _fetchAverageRating(widget.tailorModel.id!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else {
+                        final avgRating = snapshot.data!;
+                        return Center(
+                          child: SizedBox(
+                            child: Text(
+                              '${avgRating.toStringAsFixed(2)}/5($finalTotalRating)',
+                              style: const TextStyle(fontSize: 17),
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),

@@ -257,7 +257,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     if (message.type == 'text') {
       // For text messages
       return Text(
-        message.text ?? "",
+        message.text,
         style: TextStyle(
           color: message.sender == widget.firebaseUser.uid
               ? Colors.white
