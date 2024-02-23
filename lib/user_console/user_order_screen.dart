@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class UserOrderScreen extends StatelessWidget {
   const UserOrderScreen({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +135,20 @@ class OrderDetailScreen extends StatelessWidget {
               trailing: Icon(Icons.credit_card),
             ),
           ),
+          ElevatedButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  return RatingBottomSheet(
+                    userId: order['userId'],
+                    tailorId: order['tailorId'],
+                  );
+                },
+              );
+            },
+            child: const Text('Rate this order'),
+          )
         ],
       ),
     );
@@ -154,6 +168,110 @@ class TrackingStep extends StatelessWidget {
       title: Text(title),
       subtitle: Text(time),
       leading: const Icon(Icons.check_circle_outline),
+    );
+  }
+}
+
+class RatingBottomSheet extends StatefulWidget {
+  final String userId;
+  final String tailorId;
+
+  const RatingBottomSheet({
+    Key? key,
+    required this.userId,
+    required this.tailorId,
+  }) : super(key: key);
+
+  @override
+  _RatingBottomSheetState createState() => _RatingBottomSheetState();
+}
+
+class _RatingBottomSheetState extends State<RatingBottomSheet> {
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  int selectedRating = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Rate this order',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+            ),
+          ),
+          SizedBox(height: 20.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (int i = 1; i <= 5; i++)
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedRating = i;
+                    });
+                  },
+                  icon: Icon(
+                    selectedRating >= i ? Icons.star : Icons.star_border,
+                    color: Colors.orange,
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(height: 20.0),
+          ElevatedButton(
+            onPressed: () {
+              // Code to store the rating in Firebase database
+              firebaseFirestore.collection('ratings').add({
+                'userId': widget.userId,
+                'tailorId': widget.tailorId,
+                'rating': selectedRating,
+              });
+              Navigator.pop(context); // Close the bottom sheet
+            },
+            child: Text('Submit'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RatingStars extends StatefulWidget {
+  final Function(int) onRatingUpdate;
+
+  const RatingStars({Key? key, required this.onRatingUpdate}) : super(key: key);
+
+  @override
+  _RatingStarsState createState() => _RatingStarsState();
+}
+
+class _RatingStarsState extends State<RatingStars> {
+  int _selectedRating = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(5, (index) {
+        int starIndex = index + 1;
+        return IconButton(
+          onPressed: () {
+            setState(() {
+              _selectedRating = starIndex;
+            });
+            widget.onRatingUpdate(_selectedRating);
+          },
+          icon: Icon(
+            _selectedRating >= starIndex ? Icons.star : Icons.star_border,
+            color: Colors.orange,
+          ),
+        );
+      }),
     );
   }
 }
