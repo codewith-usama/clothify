@@ -214,6 +214,8 @@
 // }
 // new code
 
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -341,13 +343,11 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       String fileName = path.basename(file.path);
       String filePath = 'chat_images/${uuid.v1()}/$fileName';
 
-      print('in');
-
       try {
         // Upload to Firebase Storage
         TaskSnapshot snapshot =
             await FirebaseStorage.instance.ref(filePath).putFile(file);
-        print('try');
+        
         // Get image URL
         String downloadURL = await snapshot.ref.getDownloadURL();
 

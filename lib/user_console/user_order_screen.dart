@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -135,20 +137,21 @@ class OrderDetailScreen extends StatelessWidget {
               trailing: Icon(Icons.credit_card),
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return RatingBottomSheet(
-                    userId: order['userId'],
-                    tailorId: order['tailorId'],
-                  );
-                },
-              );
-            },
-            child: const Text('Rate this order'),
-          )
+          if (order['status'] == 'Completed')
+            ElevatedButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return RatingBottomSheet(
+                      userId: order['userId'],
+                      tailorId: order['tailorId'],
+                    );
+                  },
+                );
+              },
+              child: const Text('Rate this order'),
+            )
         ],
       ),
     );
@@ -193,18 +196,18 @@ class _RatingBottomSheetState extends State<RatingBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          const Text(
             'Rate this order',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20.0,
             ),
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -222,7 +225,7 @@ class _RatingBottomSheetState extends State<RatingBottomSheet> {
                 ),
             ],
           ),
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20.0),
           ElevatedButton(
             onPressed: () {
               // Code to store the rating in Firebase database
@@ -233,7 +236,7 @@ class _RatingBottomSheetState extends State<RatingBottomSheet> {
               });
               Navigator.pop(context); // Close the bottom sheet
             },
-            child: Text('Submit'),
+            child: const Text('Submit'),
           ),
         ],
       ),
@@ -257,21 +260,24 @@ class _RatingStarsState extends State<RatingStars> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(5, (index) {
-        int starIndex = index + 1;
-        return IconButton(
-          onPressed: () {
-            setState(() {
-              _selectedRating = starIndex;
-            });
-            widget.onRatingUpdate(_selectedRating);
-          },
-          icon: Icon(
-            _selectedRating >= starIndex ? Icons.star : Icons.star_border,
-            color: Colors.orange,
-          ),
-        );
-      }),
+      children: List.generate(
+        5,
+        (index) {
+          int starIndex = index + 1;
+          return IconButton(
+            onPressed: () {
+              setState(() {
+                _selectedRating = starIndex;
+              });
+              widget.onRatingUpdate(_selectedRating);
+            },
+            icon: Icon(
+              _selectedRating >= starIndex ? Icons.star : Icons.star_border,
+              color: Colors.orange,
+            ),
+          );
+        },
+      ),
     );
   }
 }
