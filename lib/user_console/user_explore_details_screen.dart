@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -150,9 +150,9 @@ class _UserExploreDetailsScreenState extends State<UserExploreDetailsScreen> {
       int totalRatings = querySnapshot.docs.length;
       finalTotalRating = totalRatings;
 
-      querySnapshot.docs.forEach((doc) {
+      for (var doc in querySnapshot.docs) {
         totalRating += doc['rating'];
-      });
+      }
 
       double avgRating = totalRatings > 0 ? totalRating / totalRatings : 0;
 
