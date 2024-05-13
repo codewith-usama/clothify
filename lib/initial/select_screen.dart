@@ -3,18 +3,32 @@ import 'package:fyp/tailor_console/choose_tailor_screen.dart';
 import 'package:fyp/user_console/choose_user_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SelectScreen extends StatelessWidget {
+class SelectScreen extends StatefulWidget {
   const SelectScreen({super.key});
+
+  @override
+  State<SelectScreen> createState() => _SelectScreenState();
+}
+
+class _SelectScreenState extends State<SelectScreen> {
+  String? imagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    imagePath = 'assets/background1.jpg';
+  }
 
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/background1.jpg'),
+            image: AssetImage(imagePath!),
             fit: BoxFit.cover,
             opacity: 0.9,
           ),

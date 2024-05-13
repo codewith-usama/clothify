@@ -40,12 +40,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       if (snapshot.exists) {
         // If data exists, update the TextEditingController with fetched data
         Map<String, dynamic> data = snapshot.data()!;
-        _measurementsControllers['Bust']!.text = data['bust'];
-        _measurementsControllers['Waist']!.text = data['waist'];
-        _measurementsControllers['Hip']!.text = data['hip'];
-        _measurementsControllers['Flare']!.text = data['flare'];
-        _measurementsControllers['StrapToHem']!.text = data['strapToHem'];
-        _measurementsControllers['WaistToHem']!.text = data['waistToHem'];
+        _measurementsControllers['Shoulder']!.text = data['Shoulder'];
+        _measurementsControllers['Chest']!.text = data['Chest'];
+        _measurementsControllers['Neck']!.text = data['Neck'];
+        _measurementsControllers['Sleeve length']!.text = data['Sleeve length'];
+        _measurementsControllers['Bicep']!.text = data['Bicep'];
+        _measurementsControllers['Shirt length']!.text = data['Shirt length'];
+        _measurementsControllers['Back width']!.text = data['Back width'];
         _specialDescriptionController.text = data['specialDescription'];
       }
     } catch (error) {
@@ -54,12 +55,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   }
 
   final Map<String, TextEditingController> _measurementsControllers = {
-    'Bust': TextEditingController(),
-    'Waist': TextEditingController(),
-    'Hip': TextEditingController(),
-    'Flare': TextEditingController(),
-    'StrapToHem': TextEditingController(),
-    'WaistToHem': TextEditingController(),
+    'Shoulder': TextEditingController(),
+    'Chest': TextEditingController(),
+    'Neck': TextEditingController(),
+    'Sleeve length': TextEditingController(),
+    'Bicep': TextEditingController(),
+    'Shirt length': TextEditingController(),
+    'Back width': TextEditingController(),
   };
   final _specialDescriptionController = TextEditingController();
   final List<String> _clothTypes = [
@@ -75,12 +77,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       Map<String, dynamic> orderData = {
         'userId': widget.userId,
         'tailorId': widget.tailorId,
-        'bust': _measurementsControllers['Bust']!.text,
-        'waist': _measurementsControllers['Waist']!.text,
-        'hip': _measurementsControllers['Hip']!.text,
-        'flare': _measurementsControllers['Flare']!.text,
-        'strapToHem': _measurementsControllers['StrapToHem']!.text,
-        'waistToHem': _measurementsControllers['WaistToHem']!.text,
+        'Shoulder': _measurementsControllers['Shoulder']!.text,
+        'Chest': _measurementsControllers['Chest']!.text,
+        'Neck': _measurementsControllers['Neck']!.text,
+        'Sleeve length': _measurementsControllers['Sleeve length']!.text,
+        'Bicep': _measurementsControllers['Bicep']!.text,
+        'Back width': _measurementsControllers['Back width']!.text,
         'specialDescription': _specialDescriptionController.text,
         'status': 'Pending',
       };

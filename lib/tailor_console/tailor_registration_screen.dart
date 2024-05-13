@@ -1,5 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/helper/ui_helper.dart';
 import 'package:fyp/tailor_console/tailor_authentication_vm.dart';
@@ -246,14 +249,68 @@ class TailorRegistrationScreen extends StatelessWidget {
                         width: double.maxFinite,
                         child: Consumer<TailorAuthenticationVm>(
                           builder: (context, value, _) => ElevatedButton(
+                            // onPressed: () async {
+                            //   if (formKey.currentState!.validate()) {
+                            //     value.setLoading(true);
+                            //     // Collect all field values
+
+                            //     Map<String, String> tailorsRegistrationData = {
+                            //       'tailorEmail': emailController.text.trim(),
+                            //       'tailorPassword':
+                            //           passwordController.text.trim(),
+                            //       'fullName': fullNameController.text.trim(),
+                            //       'shopName': shopNameController.text.trim(),
+                            //       'shopNumber':
+                            //           shopNumberController.text.trim(),
+                            //       'description': descController.text.trim(),
+                            //       'area': areaController.text.trim(),
+                            //       'city': cityController.text.trim(),
+                            //       'zipCode': zipCodeController.text.trim(),
+                            //       'availableTimings':
+                            //           availableTimingsController.text.trim(),
+                            //       'typesOfCloths':
+                            //           typesOfClothsController.text.trim(),
+                            //       'priceForEachTime':
+                            //           priceForEachTimeController.text.trim(),
+                            //       'phoneNumber':
+                            //           phoneNumberController.text.trim(),
+                            //       'profilePic': "",
+                            //       'orderStatus': "open",
+                            //       'id': "",
+                            //     };
+
+                            //     await value
+                            //         .tailorRegistration(tailorsRegistrationData)
+                            //         .then(
+                            //           (result) => result.fold(
+                            //             (l) => Navigator.of(context)
+                            //                 .pushReplacement(
+                            //               MaterialPageRoute(
+                            //                 builder: (context) =>
+                            //                     TailorHomeMasterScreen(
+                            //                   user: value.user!,
+                            //                   tailorModel: value.tailorModel1!,
+                            //                 ),
+                            //               ),
+                            //             ),
+                            //             (r) => UIHelper.showAlertDialog(
+                            //                 context, 'Signup Failed', r),
+                            //           ),
+                            //         );
+                            //   }
+                            // },
                             onPressed: () async {
                               if (formKey.currentState!.validate()) {
                                 value.setLoading(true);
-                                // Collect all field values
+                                // Hashing the password
+                                var bytes = utf8.encode(passwordController.text
+                                    .trim()); // data being hashed
+                                var digest = sha256.convert(bytes);
+
                                 Map<String, String> tailorsRegistrationData = {
                                   'tailorEmail': emailController.text.trim(),
-                                  'tailorPassword':
-                                      passwordController.text.trim(),
+                                  'tailorPassword': digest
+                                      .toString(), // store hashed password
                                   'fullName': fullNameController.text.trim(),
                                   'shopName': shopNameController.text.trim(),
                                   'shopNumber':

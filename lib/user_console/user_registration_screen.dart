@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/helper/ui_helper.dart';
 import 'package:fyp/user_console/user_authentication_vm.dart';
@@ -149,8 +152,13 @@ class UserRegistrationScreen extends StatelessWidget {
                           onPressed: () async {
                             if (formKey.currentState!.validate()) {
                               value.setLoading(true);
+                              // Hashing the password
+                              var bytes = utf8.encode(passwordController.text
+                                  .trim()); // data being hashed
+                              var digest = sha256.convert(bytes);
+
                               String email = emailController.text.trim();
-                              String password = passwordController.text.trim();
+                              String password = digest.toString();
                               String fullName = fullNameController.text.trim();
                               String phoneNumber =
                                   phoneNumberController.text.trim();

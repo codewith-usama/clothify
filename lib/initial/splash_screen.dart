@@ -24,7 +24,10 @@ class _SplashScreenState extends State<SplashScreen> {
     splashFunction();
   }
 
+  String? imagePath;
+
   void splashFunction() {
+    imagePath = 'assets/icon.png';
     Timer(const Duration(seconds: 2), () => checkUser());
   }
 
@@ -91,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               SizedBox(height: height * 0.30),
               Image.asset(
-                'assets/icon.png',
+                imagePath!,
                 height: height * 0.35,
               ),
               SizedBox(height: height * 0.10),
