@@ -1,10 +1,11 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, unnecessary_nullable_for_final_variable_declarations
 
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -222,7 +223,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       //     .doc(firebaseAuth.currentUser!.uid)
       //     .set({'customorders': uploadedImageUrls}, SetOptions(merge: true));
     } else {
-      print('No images selected for recent orders.');
+      if (kDebugMode) {
+        print('No images selected for recent orders.');
+      }
     }
   }
 

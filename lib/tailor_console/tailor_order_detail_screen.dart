@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, unused_element, avoid_function_literals_in_foreach_calls
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -43,6 +45,21 @@ class _TailorOrderDetailScreenState extends State<TailorOrderDetailScreen> {
         SnackBar(content: Text('Failed to update status: $error')),
       );
     });
+  }
+
+  void _openFullScreenImage(BuildContext context, String imageUrl) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          body: Center(
+            child: InteractiveViewer(
+              child: Image.network(imageUrl, fit: BoxFit.contain),
+            ),
+          ),
+          backgroundColor: Colors.black,
+        ),
+      ),
+    );
   }
 
   @override
@@ -211,29 +228,72 @@ class _TailorOrderDetailScreenState extends State<TailorOrderDetailScreen> {
                     ],
                   ),
                 ),
-                ListTile(
-                  title: const Text('Status'),
-                  subtitle: Text(_selectedStatus),
-                ),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Customer Order Images:',
+                  child: Text('Customer Designs:',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
-                SizedBox(
-                  height: 200, // Set a fixed height for the image list
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: customerOrder.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.network(customerOrder[index]),
-                      );
-                    },
+                Center(
+                  child: SizedBox(
+                    height: 200, // Set a fixed height for the image list
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: customerOrder.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () => _openFullScreenImage(
+                              context, customerOrder[index]),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.network(customerOrder[index]),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
-                // Existing card and status update button...
+                Card(
+                  margin: const EdgeInsets.all(8),
+                  child: Column(
+                    children: [
+                      const ListTile(
+                        title: Text('Total Bill'),
+                        subtitle: Text('PKR: 43.35'),
+                        trailing: Icon(Icons.credit_card),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            DropdownButton<String>(
+                              value: _selectedStatus,
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedStatus = value!;
+                                });
+                              },
+                              items: <String>[
+                                'Pending',
+                                'In-progress',
+                                'Completed'
+                              ].map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                            ElevatedButton(
+                              onPressed: _updateStatus,
+                              child: const Text('Update Status'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

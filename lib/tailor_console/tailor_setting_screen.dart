@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously, unnecessary_nullable_for_final_variable_declarations, avoid_print
-
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,62 +26,7 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   String errorMessage = '';
-
-  @override
-  void initState() {
-    super.initState();
-    fetchUserData();
-    fetchProfileImage();
-  }
-
-  Future<void> fetchUserData() async {
-    try {
-      String userId = firebaseAuth.currentUser!.uid;
-      DocumentSnapshot userDoc =
-          await firebaseFirestore.collection('tailors').doc(userId).get();
-
-      // Explicitly cast userDoc.data() to Map<String, dynamic>?
-      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-
-      setState(() {
-        if (userData?.containsKey('orderStatus') ?? false) {
-          isOrderActive = userData!['orderStatus'] == 'Open';
-        }
-        fullName = userData?['fullName'];
-        email = userData?['tailorEmail'];
-      });
-    } catch (e) {
-      print('Error fetching user data: $e');
-    }
-  }
-
-  Future<void> fetchProfileImage() async {
-    try {
-      String userId = firebaseAuth.currentUser!.uid;
-      DocumentSnapshot userDoc =
-          await firebaseFirestore.collection('tailors').doc(userId).get();
-
-      // Explicitly cast userDoc.data() to Map<String, dynamic>?
-      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-
-      if (userDoc.exists &&
-          userData != null &&
-          userData.containsKey('profilePic')) {
-        setState(() {
-          imageUrl = userData['profilePic'];
-        });
-      } else {
-        setState(() {
-          imageUrl = null;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        imageUrl = null;
-        print('Error fetching profile image: $e');
-      });
-    }
-  }
+  bool isOrderActive = true;
 
   Future getImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -151,8 +95,6 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
     );
   }
 
-  bool isOrderActive = true;
-
   Future<void> updateOrderStatusInDatabase(bool status) async {
     try {
       String userId = firebaseAuth.currentUser!.uid;
@@ -164,8 +106,63 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
     }
   }
 
+  bool isLoading = true; // Initialize loading state
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserDataAndImage();
+  }
+
+  Future<void> fetchUserDataAndImage() async {
+    await fetchUserData();
+    await fetchProfileImage();
+    setState(() {
+      isLoading = false; // Update loading state after data is fetched
+    });
+  }
+
+  Future<void> fetchUserData() async {
+    try {
+      String userId = firebaseAuth.currentUser!.uid;
+      var userDoc =
+          await firebaseFirestore.collection('tailors').doc(userId).get();
+      var userData = userDoc.data();
+      if (userData != null) {
+        fullName = userData['fullName'];
+        email = userData['tailorEmail'];
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
+  Future<void> fetchProfileImage() async {
+    try {
+      String userId = firebaseAuth.currentUser!.uid;
+      var userDoc =
+          await firebaseFirestore.collection('tailors').doc(userId).get();
+      var userData = userDoc.data();
+      if (userDoc.exists &&
+          userData != null &&
+          userData.containsKey('profilePic')) {
+        imageUrl = userData['profilePic'];
+      }
+    } catch (e) {
+      print('Error fetching profile image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child:
+              CircularProgressIndicator(), // Show loading indicator while data is fetching
+        ),
+      );
+    }
     return Scaffold(
       body: SafeArea(
         child: Padding(

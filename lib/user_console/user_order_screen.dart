@@ -106,6 +106,23 @@ class UserOrderScreen extends StatelessWidget {
   }
 }
 
+class TrackingStep extends StatelessWidget {
+  final String title;
+  final String time;
+
+  const TrackingStep({Key? key, required this.title, required this.time})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(time),
+      leading: const Icon(Icons.check_circle_outline),
+    );
+  }
+}
+
 class OrderDetailScreen extends StatelessWidget {
   final Map<String, dynamic> order;
 
@@ -158,23 +175,6 @@ class OrderDetailScreen extends StatelessWidget {
   }
 }
 
-class TrackingStep extends StatelessWidget {
-  final String title;
-  final String time;
-
-  const TrackingStep({Key? key, required this.title, required this.time})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(title),
-      subtitle: Text(time),
-      leading: const Icon(Icons.check_circle_outline),
-    );
-  }
-}
-
 class RatingBottomSheet extends StatefulWidget {
   final String userId;
   final String tailorId;
@@ -192,52 +192,93 @@ class RatingBottomSheet extends StatefulWidget {
 class _RatingBottomSheetState extends State<RatingBottomSheet> {
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   int selectedRating = 0;
+  bool hasRated = false;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    checkIfAlreadyRated();
+  }
+
+  void checkIfAlreadyRated() async {
+    // Query the database to check if a rating exists
+    var ratingSnapshot = await firebaseFirestore
+        .collection('ratings')
+        .where('userId', isEqualTo: widget.userId)
+        .where('tailorId', isEqualTo: widget.tailorId)
+        .get();
+
+    if (ratingSnapshot.docs.isNotEmpty) {
+      setState(() {
+        hasRated = true; // User has already rated
+        selectedRating = ratingSnapshot.docs.first
+            .data()['rating']; // Display existing rating
+      });
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Container(
+        padding: EdgeInsets.all(16.0),
+        child:
+            CircularProgressIndicator(), // Show a loading spinner while checking
+      );
+    }
+
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Rate this order',
+          Text(
+            hasRated ? 'Thank you for your feedback!' : 'Rate this order',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20.0,
             ),
           ),
-          const SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (int i = 1; i <= 5; i++)
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedRating = i;
-                    });
-                  },
-                  icon: Icon(
-                    selectedRating >= i ? Icons.star : Icons.star_border,
-                    color: Colors.orange,
+          SizedBox(height: 20.0),
+          if (!hasRated)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (int i = 1; i <= 5; i++)
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedRating = i;
+                      });
+                    },
+                    icon: Icon(
+                      selectedRating >= i ? Icons.star : Icons.star_border,
+                      color: Colors.orange,
+                    ),
                   ),
-                ),
-            ],
-          ),
+              ],
+            ),
           const SizedBox(height: 20.0),
-          ElevatedButton(
-            onPressed: () {
-              // Code to store the rating in Firebase database
-              firebaseFirestore.collection('ratings').add({
-                'userId': widget.userId,
-                'tailorId': widget.tailorId,
-                'rating': selectedRating,
-              });
-              Navigator.pop(context); // Close the bottom sheet
-            },
-            child: const Text('Submit'),
-          ),
+          if (!hasRated)
+            ElevatedButton(
+              onPressed: () {
+                // Store the rating in the database
+                firebaseFirestore.collection('ratings').add({
+                  'userId': widget.userId,
+                  'tailorId': widget.tailorId,
+                  'rating': selectedRating,
+                }).then((value) {
+                  setState(() {
+                    hasRated = true; // Prevent further ratings
+                  });
+                });
+              },
+              child: const Text('Submit'),
+            )
         ],
       ),
     );
