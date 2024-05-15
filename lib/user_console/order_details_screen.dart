@@ -1,7 +1,12 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final String userId;
@@ -78,6 +83,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         'Back width': _measurementsControllers['Back width']!.text,
         'specialDescription': _specialDescriptionController.text,
         'status': 'Pending',
+        'customerOrder': uploadImageUrlToOrder,
       };
 
       String documentId = '${widget.userId}_${widget.tailorId}';
@@ -193,6 +199,43 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     'assets/women/pants/4_dress.jpg': 'assets/women/pants/4_dress_model.jpg',
   };
 
+  final picker = ImagePicker();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  List<String> uploadImageUrlToOrder = [];
+
+  Future<void> selectRecentOrders() async {
+    final List<XFile>? pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles != null && pickedFiles.isNotEmpty) {
+      List<String> uploadedImageUrls = [];
+      for (var file in pickedFiles) {
+        File imageFile = File(file.path);
+        String url = await uploadOrderImageToFirebase(imageFile);
+        uploadedImageUrls.add(url);
+      }
+
+      uploadImageUrlToOrder = uploadedImageUrls;
+
+      // await firebaseFirestore
+      //     .collection('orders')
+      //     .doc(firebaseAuth.currentUser!.uid)
+      //     .set({'customorders': uploadedImageUrls}, SetOptions(merge: true));
+    } else {
+      print('No images selected for recent orders.');
+    }
+  }
+
+  Future<String> uploadOrderImageToFirebase(File image) async {
+    String fileName =
+        'recent_${DateTime.now().millisecondsSinceEpoch}_${firebaseAuth.currentUser!.uid}';
+    Reference firebaseStorageRef =
+        firebaseStorage.ref().child('customorders/$fileName');
+    UploadTask uploadTask = firebaseStorageRef.putFile(image);
+    await uploadTask.whenComplete(() => null);
+    return await firebaseStorageRef.getDownloadURL();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -289,6 +332,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         .toList(),
                   ),
                 ],
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: selectRecentOrders,
+                  child: const Text('Select Images from Gallery'),
+                ),
                 const SizedBox(height: 10),
                 ..._measurementsControllers.keys.map((measurement) {
                   return Padding(
