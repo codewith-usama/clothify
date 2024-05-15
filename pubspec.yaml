@@ -35,5 +35,9 @@ flutter:
 
   assets:
     - assets/
-    - assets/men/pants/
     - assets/men/shirts/
+    - assets/men/pants/
+    - assets/men/suits/
+    - assets/men/t_shirts/
+    - assets/women/dresses/
+    - assets/women/pants/

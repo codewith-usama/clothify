@@ -220,6 +220,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
@@ -347,15 +348,16 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         // Upload to Firebase Storage
         TaskSnapshot snapshot =
             await FirebaseStorage.instance.ref(filePath).putFile(file);
-        
+
         // Get image URL
         String downloadURL = await snapshot.ref.getDownloadURL();
 
         // Send message with image URL
         sendMessage(imageUrl: downloadURL);
       } catch (e) {
-        print('catch');
-        print(e); // Handle errors
+        if (kDebugMode) {
+          print(e.toString());
+        }
       }
     }
   }
@@ -363,6 +365,35 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Row(
+          children: [
+            if (widget.firebaseUser.uid == userModel?.id)
+              CircleAvatar(
+                backgroundImage: NetworkImage(
+                  tailorModel?.profilePic ??
+                      'https://th.bing.com/th/id/R.72380963a35b3fba67398022db5ae99d?rik=ga0xsfijaETFdQ&riu=http%3a%2f%2f1.bp.blogspot.com%2f-NP0zmaopjRE%2fUhhnlfaNsrI%2fAAAAAAAAEuE%2fZ5HQX6Jhqik%2fs1600%2fa%2b(9).jpg&ehk=AGheMSErLhbTXsly541CsCFJA95DVaC6Hd3vxS6KKFU%3d&risl=&pid=ImgRaw&r=0',
+                ),
+              ),
+            if (widget.firebaseUser.uid == tailorModel?.id)
+              CircleAvatar(
+                backgroundImage: NetworkImage(
+                  userModel?.profilePic ??
+                      'https://th.bing.com/th/id/R.72380963a35b3fba67398022db5ae99d?rik=ga0xsfijaETFdQ&riu=http%3a%2f%2f1.bp.blogspot.com%2f-NP0zmaopjRE%2fUhhnlfaNsrI%2fAAAAAAAAEuE%2fZ5HQX6Jhqik%2fs1600%2fa%2b(9).jpg&ehk=AGheMSErLhbTXsly541CsCFJA95DVaC6Hd3vxS6KKFU%3d&risl=&pid=ImgRaw&r=0',
+                ),
+              ),
+            const SizedBox(width: 10),
+            if (widget.firebaseUser.uid == tailorModel?.id)
+              Text(userModel?.userFullName ?? ''),
+            if (widget.firebaseUser.uid == userModel?.id)
+              Text(tailorModel?.fullName ?? ''),
+          ],
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
