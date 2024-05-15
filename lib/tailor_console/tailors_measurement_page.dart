@@ -64,7 +64,7 @@ class _TailorsMeasurementPageState extends State<TailorsMeasurementPage> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddOrEditMeasurementForm(),
         child: const Icon(Icons.add),
