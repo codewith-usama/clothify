@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fyp/user_console/user_order_screen.dart';
+import 'package:fyp/tailor_console/tailor_order_detail_screen.dart';
 
 class TailorOrderScreen extends StatelessWidget {
   const TailorOrderScreen({super.key});
@@ -69,7 +69,7 @@ class TailorOrderScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  OrderDetailScreen(order: order),
+                                  TailorOrderDetailScreen(order: order),
                             ),
                           ),
                         ),
