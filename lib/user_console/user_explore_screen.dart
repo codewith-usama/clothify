@@ -214,9 +214,9 @@ class _UserExploreScreenState extends State<UserExploreScreen> {
                                                     ),
                                                   ),
                                                 ),
-                                                const SizedBox(width: 10),
+                                                const SizedBox(width: 3),
                                                 SizedBox(
-                                                  width: 90,
+                                                  width: 75,
                                                   child: Card(
                                                     color:
                                                         shop['orderStatus'] ==

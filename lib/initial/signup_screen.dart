@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:fyp/tailor_console/choose_tailor_screen.dart';
-import 'package:fyp/user_console/choose_user_screen.dart';
+import 'package:fyp/tailor_console/tailor_registration_screen.dart';
+import 'package:fyp/user_console/user_registration_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SelectScreen extends StatefulWidget {
-  const SelectScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<SelectScreen> createState() => _SelectScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SelectScreenState extends State<SelectScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   String? imagePath;
 
   @override
   void initState() {
     super.initState();
-    imagePath = 'assets/background1.jpg';
+    imagePath = 'assets/1.jpg';
   }
 
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
-    final double width = MediaQuery.of(context).size.width;
-
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -69,7 +68,10 @@ class _SelectScreenState extends State<SelectScreen> {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const ChooseTailorScreen(),
+                              builder: (context) => TailorRegistrationScreen(
+                                height: height,
+                                width: width,
+                              ),
                             ),
                           );
                         },
@@ -101,7 +103,10 @@ class _SelectScreenState extends State<SelectScreen> {
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const ChooseUserScreen(),
+                              builder: (context) => UserRegistrationScreen(
+                                height: height,
+                                width: width,
+                              ),
                             ),
                           );
                         },

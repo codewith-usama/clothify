@@ -88,7 +88,6 @@ class UserAuthenticationVM extends ChangeNotifier {
         }
       } else {
         setLoading(false);
-
         return right('User is null');
       }
     } on FirebaseAuthException catch (e) {

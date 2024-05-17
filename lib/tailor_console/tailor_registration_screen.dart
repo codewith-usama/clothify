@@ -10,7 +10,7 @@ import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class TailorRegistrationScreen extends StatelessWidget {
+class TailorRegistrationScreen extends StatefulWidget {
   final double height;
   final double width;
   const TailorRegistrationScreen({
@@ -20,26 +20,64 @@ class TailorRegistrationScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-    // TextEditingControllers
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final TextEditingController fullNameController = TextEditingController();
-    final TextEditingController shopNameController = TextEditingController();
-    final TextEditingController shopNumberController = TextEditingController();
-    final TextEditingController descController = TextEditingController();
-    final TextEditingController areaController = TextEditingController();
-    final TextEditingController cityController = TextEditingController();
-    final TextEditingController zipCodeController = TextEditingController();
-    final TextEditingController availableTimingsController =
-        TextEditingController();
-    final TextEditingController typesOfClothsController =
-        TextEditingController();
-    final TextEditingController priceForEachTimeController =
-        TextEditingController();
-    final TextEditingController phoneNumberController = TextEditingController();
+  State<TailorRegistrationScreen> createState() =>
+      _TailorRegistrationScreenState();
+}
 
+class _TailorRegistrationScreenState extends State<TailorRegistrationScreen> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+  late final TextEditingController fullNameController;
+  late final TextEditingController shopNameController;
+  late final TextEditingController shopNumberController;
+  late final TextEditingController descController;
+  late final TextEditingController areaController;
+  late final TextEditingController cityController;
+  late final TextEditingController zipCodeController;
+  late final TextEditingController availableTimingsController;
+  late final TextEditingController typesOfClothsController;
+  late final TextEditingController priceForEachTimeController;
+  late final TextEditingController phoneNumberController;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    fullNameController = TextEditingController();
+    shopNameController = TextEditingController();
+    shopNumberController = TextEditingController();
+    descController = TextEditingController();
+    areaController = TextEditingController();
+    priceForEachTimeController = TextEditingController();
+    cityController = TextEditingController();
+    zipCodeController = TextEditingController();
+    availableTimingsController = TextEditingController();
+    typesOfClothsController = TextEditingController();
+    phoneNumberController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    fullNameController.dispose();
+    shopNameController.dispose();
+    shopNumberController.dispose();
+    descController.dispose();
+    areaController.dispose();
+    priceForEachTimeController.dispose();
+    cityController.dispose();
+    availableTimingsController.dispose();
+    typesOfClothsController.dispose();
+    phoneNumberController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 166, 206, 226),
       body: SafeArea(
@@ -52,19 +90,19 @@ class TailorRegistrationScreen extends StatelessWidget {
                 builder: (context) => SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: height * 0.04),
+                      SizedBox(height: widget.height * 0.04),
                       Text(
                         'GET STARTED',
                         style: GoogleFonts.mali(
                           textStyle: TextStyle(
                             color: Colors.white,
                             letterSpacing: 2,
-                            fontSize: width * 0.12,
+                            fontSize: widget.width * 0.12,
                             fontStyle: FontStyle.italic,
                           ),
                         ),
                       ),
-                      SizedBox(height: height * 0.03),
+                      SizedBox(height: widget.height * 0.03),
                       TextFormField(
                         controller: emailController,
                         keyboardType: TextInputType.emailAddress,
@@ -370,7 +408,7 @@ class TailorRegistrationScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: height * 0.04),
+                      SizedBox(height: widget.height * 0.04),
                     ],
                   ),
                 ),

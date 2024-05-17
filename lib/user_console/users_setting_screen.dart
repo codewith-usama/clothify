@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/initial/select_screen.dart';
+import 'package:fyp/initial/signin_screen.dart';
 import 'package:fyp/user_console/user_change_password_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -31,8 +31,17 @@ class _UsersSettingScreenState extends State<UsersSettingScreen> {
   @override
   void initState() {
     super.initState();
-    fetchProfileImage();
-    fetchUserData();
+    fetchUserDataAndImage();
+  }
+
+  bool isLoading = true;
+
+  Future<void> fetchUserDataAndImage() async {
+    await fetchUserData();
+    await fetchProfileImage();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> fetchUserData() async {
@@ -98,13 +107,20 @@ class _UsersSettingScreenState extends State<UsersSettingScreen> {
   void pushRoute() {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const SelectScreen()),
+      MaterialPageRoute(builder: (context) => const SignInScreen()),
       (route) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       body: SafeArea(
         child: Padding(

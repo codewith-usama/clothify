@@ -8,7 +8,7 @@ import 'package:fyp/user_console/user_home_master_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-class UserRegistrationScreen extends StatelessWidget {
+class UserRegistrationScreen extends StatefulWidget {
   final double height;
   final double width;
   const UserRegistrationScreen({
@@ -18,17 +18,46 @@ class UserRegistrationScreen extends StatelessWidget {
   });
 
   @override
+  State<UserRegistrationScreen> createState() => _UserRegistrationScreenState();
+}
+
+class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  late final TextEditingController passwordController;
+  late final TextEditingController emailController;
+  late final TextEditingController fullNameController;
+  late final TextEditingController phoneNumberController;
+  late final TextEditingController areaController;
+  late final TextEditingController cityController;
+  late final TextEditingController zipCodeController;
+
+  @override
+  void initState() {
+    super.initState();
+    passwordController = TextEditingController();
+    emailController = TextEditingController();
+    fullNameController = TextEditingController();
+    phoneNumberController = TextEditingController();
+    areaController = TextEditingController();
+    cityController = TextEditingController();
+    zipCodeController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    emailController.dispose();
+    fullNameController.dispose();
+    phoneNumberController.dispose();
+    areaController.dispose();
+    cityController.dispose();
+    zipCodeController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final TextEditingController fullNameController = TextEditingController();
-    final TextEditingController phoneNumberController = TextEditingController();
-    final TextEditingController areaController = TextEditingController();
-    final TextEditingController cityController = TextEditingController();
-    final TextEditingController zipCodeController = TextEditingController();
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 166, 206, 226),
       body: SafeArea(
@@ -40,19 +69,19 @@ class UserRegistrationScreen extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: height * 0.04),
+                    SizedBox(height: widget.height * 0.04),
                     Text(
                       'GET STARTED',
                       style: GoogleFonts.mali(
                         textStyle: TextStyle(
                           color: Colors.white,
                           letterSpacing: 2,
-                          fontSize: width * 0.12,
+                          fontSize: widget.width * 0.12,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
                     ),
-                    SizedBox(height: height * 0.03),
+                    SizedBox(height: widget.height * 0.03),
                     TextFormField(
                       controller: emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -218,7 +247,7 @@ class UserRegistrationScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: height * 0.04),
+                    SizedBox(height: widget.height * 0.04),
                   ],
                 ),
               ),

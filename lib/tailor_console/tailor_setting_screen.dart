@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp/initial/select_screen.dart';
+import 'package:fyp/initial/signin_screen.dart';
 import 'package:fyp/tailor_console/tailor_change_password_screen.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -31,26 +31,29 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
   @override
   void initState() {
     super.initState();
-    fetchUserData();
-    fetchProfileImage();
+    fetchUserDataAndImage();
+  }
+
+  bool isLoading = true;
+
+  Future<void> fetchUserDataAndImage() async {
+    await fetchUserData();
+    await fetchProfileImage();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> fetchUserData() async {
     try {
       String userId = firebaseAuth.currentUser!.uid;
-      DocumentSnapshot userDoc =
+      var userDoc =
           await firebaseFirestore.collection('tailors').doc(userId).get();
-
-      // Explicitly cast userDoc.data() to Map<String, dynamic>?
-      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-
-      setState(() {
-        if (userData?.containsKey('orderStatus') ?? false) {
-          isOrderActive = userData!['orderStatus'] == 'Open';
-        }
-        fullName = userData?['fullName'];
-        email = userData?['tailorEmail'];
-      });
+      var userData = userDoc.data();
+      if (userData != null) {
+        fullName = userData['fullName'];
+        email = userData['tailorEmail'];
+      }
     } catch (e) {
       print('Error fetching user data: $e');
     }
@@ -59,28 +62,16 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
   Future<void> fetchProfileImage() async {
     try {
       String userId = firebaseAuth.currentUser!.uid;
-      DocumentSnapshot userDoc =
+      var userDoc =
           await firebaseFirestore.collection('tailors').doc(userId).get();
-
-      // Explicitly cast userDoc.data() to Map<String, dynamic>?
-      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-
+      var userData = userDoc.data();
       if (userDoc.exists &&
           userData != null &&
           userData.containsKey('profilePic')) {
-        setState(() {
-          imageUrl = userData['profilePic'];
-        });
-      } else {
-        setState(() {
-          imageUrl = null;
-        });
+        imageUrl = userData['profilePic'];
       }
     } catch (e) {
-      setState(() {
-        imageUrl = null;
-        print('Error fetching profile image: $e');
-      });
+      print('Error fetching profile image: $e');
     }
   }
 
@@ -146,7 +137,7 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
   void pushRoute() {
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const SelectScreen()),
+      MaterialPageRoute(builder: (context) => const SignInScreen()),
       (route) => false,
     );
   }
@@ -166,6 +157,13 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -182,8 +180,11 @@ class _TailorSettingScreenState extends State<TailorSettingScreen> {
                     backgroundImage:
                         imageUrl != null ? NetworkImage(imageUrl!) : null,
                     child: imageUrl == null
-                        ? const Icon(Icons.person,
-                            size: 50, color: Colors.white)
+                        ? const Icon(
+                            Icons.person,
+                            size: 50,
+                            color: Colors.white,
+                          )
                         : null,
                   ),
                 ),

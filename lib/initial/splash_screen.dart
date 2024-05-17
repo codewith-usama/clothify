@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp/helper/firebase_helper.dart';
-import 'package:fyp/initial/select_screen.dart';
+import 'package:fyp/initial/signin_screen.dart';
 import 'package:fyp/tailor_console/tailor_home_master_screen.dart';
 import 'package:fyp/tailor_console/tailor_model.dart';
 import 'package:fyp/user_console/user_home_master_screen.dart';
@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     } else {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const SelectScreen()));
+          MaterialPageRoute(builder: (context) => const SignInScreen()));
     }
   }
 

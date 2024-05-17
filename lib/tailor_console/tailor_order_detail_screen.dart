@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element, avoid_function_literals_in_foreach_calls, library_private_types_in_public_api
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +16,7 @@ class TailorOrderDetailScreen extends StatefulWidget {
 
 class _TailorOrderDetailScreenState extends State<TailorOrderDetailScreen> {
   late String _selectedStatus;
+  List<String> statusOptions = ['Pending', 'In-Progress', 'Completed'];
 
   @override
   void initState() {
@@ -45,6 +48,21 @@ class _TailorOrderDetailScreenState extends State<TailorOrderDetailScreen> {
     });
   }
 
+  void _openFullScreenImage(BuildContext context, String imageUrl) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => Scaffold(
+          body: Center(
+            child: InteractiveViewer(
+              child: Image.network(imageUrl, fit: BoxFit.contain),
+            ),
+          ),
+          backgroundColor: Colors.black,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> customerOrder = widget.order['customerOrder'] ?? [];
@@ -53,7 +71,6 @@ class _TailorOrderDetailScreenState extends State<TailorOrderDetailScreen> {
         title: const Text('Order Details'),
       ),
       body: SingleChildScrollView(
-        // Use SingleChildScrollView to accommodate long content
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -203,7 +220,7 @@ class _TailorOrderDetailScreenState extends State<TailorOrderDetailScreen> {
                         ),
                       ),
                       Text(
-                        '${widget.order['specialDescription']} inches',
+                        '${widget.order['specialDescription']}',
                         style: const TextStyle(
                           fontSize: 16,
                         ),
@@ -211,29 +228,50 @@ class _TailorOrderDetailScreenState extends State<TailorOrderDetailScreen> {
                     ],
                   ),
                 ),
-                ListTile(
-                  title: const Text('Status'),
-                  subtitle: Text(_selectedStatus),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Customer Order Images:',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                SizedBox(
-                  height: 200, // Set a fixed height for the image list
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: customerOrder.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.network(customerOrder[index]),
-                      );
+                if (customerOrder.isNotEmpty)
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Customer Order Images:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                if (customerOrder.isNotEmpty)
+                  Center(
+                    child: SizedBox(
+                      height: 200, // Set a fixed height for the image list
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: customerOrder.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () => _openFullScreenImage(
+                                context, customerOrder[index]),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.network(customerOrder[index]),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                Center(
+                  child: DropdownButton<String>(
+                    value: _selectedStatus,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedStatus = newValue!;
+                      });
+                      _updateStatus();
                     },
+                    items: statusOptions
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
                 ),
-                // Existing card and status update button...
               ],
             ),
           ),
